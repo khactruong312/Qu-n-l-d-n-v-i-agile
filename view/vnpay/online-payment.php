@@ -23,7 +23,10 @@ if (isset($_POST['redirect'])) {
     $vnp_Locale = $_POST['language'];
     $vnp_BankCode = $_POST['bank_code'];
     $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
-    //Add Params of 2.0.1 Version
+    // Xử lý IP khi chạy trên localhost
+    if (empty($vnp_IpAddr) || $vnp_IpAddr == "::1" || $vnp_IpAddr == "127.0.0.1") {
+        $vnp_IpAddr = "118.70.124.33"; // Sử dụng một IP public giả lập cho sandbox
+    }
 
     $inputData = array(
         "vnp_Version" => "2.1.0",
@@ -31,6 +34,7 @@ if (isset($_POST['redirect'])) {
         "vnp_Amount" => $vnp_Amount,
         "vnp_Command" => "pay",
         "vnp_CreateDate" => date('YmdHis'),
+        "vnp_ExpireDate" => $expire,
         "vnp_CurrCode" => "VND",
         "vnp_IpAddr" => $vnp_IpAddr,
         "vnp_Locale" => $vnp_Locale,
@@ -40,10 +44,19 @@ if (isset($_POST['redirect'])) {
         "vnp_TxnRef" => $vnp_TxnRef,
     );
 
+
+    if (isset($_GET['order_id'])) {
+        $order_id = $_GET['order_id'];
+        $order = getone_order($order_id);
+    } else {
+        header('Location: index.php');
+        exit;
+    }
+
     if (isset($vnp_BankCode) && $vnp_BankCode != "") {
         $inputData['vnp_BankCode'] = $vnp_BankCode;
     }
-    //var_dump($inputData);
+
     ksort($inputData);
     $query = "";
     $i = 0;
@@ -60,11 +73,13 @@ if (isset($_POST['redirect'])) {
 
     $vnp_Url = $vnp_Url . "?" . $query;
     if (isset($vnp_HashSecret)) {
-        $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //  
+        $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
         $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
     }
     $returnData = array(
-        'code' => '00', 'message' => 'success', 'data' => $vnp_Url
+        'code' => '00',
+        'message' => 'success',
+        'data' => $vnp_Url
     );
     if (isset($_POST['redirect'])) {
         header('Location: ' . $vnp_Url);
@@ -92,15 +107,19 @@ if (isset($_POST['redirect'])) {
             </div>
             <div class="flex flex-col space-y-2">
                 <label class="font-semibold text-base" for="order_id">Order Id</label>
-                <input class="form-input rounded-md" id="order_id" name="order_id" type="text" value="<?php echo $order['order_id'] ?>" />
+                <input class="form-input rounded-md" id="order_id" name="order_id" type="text"
+                    value="<?php echo $order['order_id'] ?>" />
             </div>
             <div class="flex flex-col space-y-2">
-                <label class="font-semibold text-base" for="amount">Payment Amount : <span class="font-bold text-xl"><?php echo number_format($order['total_amount'] * 23000) ?>VND</span></label>
-                <input class="form-input rounded-md" hidden id="amount" name="amount" type="number" value="<?php echo $order['total_amount'] * 23000 ?>" />
+                <label class="font-semibold text-base" for="amount">Payment Amount : <span
+                        class="font-bold text-xl"><?php echo number_format($order['total_amount'] * 23000) ?>VND</span></label>
+                <input class="form-input rounded-md" hidden id="amount" name="amount" type="number"
+                    value="<?php echo $order['total_amount'] * 23000 ?>" />
             </div>
             <div class="flex flex-col space-y-2">
                 <label class="font-semibold text-base" for="order_desc">Payment Content</label>
-                <textarea class="form-textarea rounded-md p-2" cols="20" id="order_desc" name="order_desc" rows="2">Payment content</textarea>
+                <textarea class="form-textarea rounded-md p-2" cols="20" id="order_desc" name="order_desc"
+                    rows="2">Payment content</textarea>
             </div>
             <div class="flex flex-col space-y-2">
                 <label class="font-semibold text-base" for="bank_code">Banks</label>
@@ -136,7 +155,8 @@ if (isset($_POST['redirect'])) {
                     <option value="en">English</option>
                 </select>
             </div>
-            <button type="submit" name="redirect" id="redirect" class="btn bg-slate-700 hover:bg-slate-800 text-white rounded-full">Payment Redirect</button>
+            <button type="submit" name="redirect" id="redirect"
+                class="btn bg-slate-700 hover:bg-slate-800 text-white rounded-full">Payment Redirect</button>
         </form>
     </div>
     <p>

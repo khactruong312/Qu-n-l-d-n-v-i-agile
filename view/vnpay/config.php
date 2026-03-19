@@ -6,10 +6,10 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
  * and open the template in the editor.
  */
 
-$vnp_TmnCode = "0NF5KE9Q"; //Website ID in VNPAY System
-$vnp_HashSecret = "FSTMBVWXGXEJODKZNTVYUDOKFMAKFZSC"; //Secret key
+$vnp_TmnCode = "PEMNHSCT"; //Website ID in VNPAY System
+$vnp_HashSecret = "FOSCSXFK4F43LNOUVE8HF8A0HK3P80EX"; //Secret key (mã mặc định của VNPay Sandbox)
 $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-$vnp_Returnurl = "http://localhost:8080/e-commerce-website-da1/index.php?act=online-payment-result";
+$vnp_Returnurl = "https://remittable-gelatinously-keesha.ngrok-free.dev/e-commerce-website-da1/index.php?act=online-payment-result";
 $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
 //Config input format
 //Expire
