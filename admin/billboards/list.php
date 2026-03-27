@@ -16,7 +16,13 @@
             <table class="table lg:table-lg md:table-md sm:table-sm table-xs">
                 <!-- head -->
                 <thead class="bg-slate-700 text-white text-base">
-                    
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Sub Title</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <?php
