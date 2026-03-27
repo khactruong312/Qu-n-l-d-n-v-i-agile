@@ -168,7 +168,7 @@
         </div>
     </div>
 
-    <div class="container mx-auto max-w-[1440px] my-8 p-4 md:p-8">
+    <!-- <div class="container mx-auto max-w-[1440px] my-8 p-4 md:p-8">
         <div class="flex items-center justify-center min-h-screen bg-white">
             <div class="flex flex-col mt-8">
                 <div class="flex flex-wrap justify-center text-center mb-24">
@@ -261,5 +261,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>

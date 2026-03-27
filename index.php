@@ -1,7 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['carts'])) $_SESSION['carts'] = [];
+if (!isset($_SESSION['carts']))
+    $_SESSION['carts'] = [];
 
 include './global.php';
 include './model/pdo.php';
@@ -22,7 +23,7 @@ include './model/users.php';
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dự án 1</title>
+    <title>Quản lý dự án</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.0.7/dist/full.min.css" rel="stylesheet" type="text/css" />
     <link href="https://unpkg.com/@tailwindcss/forms@0.2.1/dist/forms.min.css" rel="stylesheet">
@@ -203,7 +204,7 @@ include './model/users.php';
                                     $dataCart = array(
                                         'product_id' => $product_id,
                                         'name' => $name,
-                                        'price' => floatval($variant['price']) -  (floatval($variant['price']) / 100) * floatval($discount),
+                                        'price' => floatval($variant['price']) - (floatval($variant['price']) / 100) * floatval($discount),
                                         'image_url' => $image_url,
                                         'quantity' => $quantity,
                                         'variant_id' => $variant['variant_id'],
@@ -271,9 +272,9 @@ include './model/users.php';
                                             $quantity = $cart['quantity'];
                                             $product_id = $cart['product_id'];
                                             $price_per_unit = $cart['price'];
-                                            $product_name =   $cart['name'] . " " . $cart['variant_name'];
+                                            $product_name = $cart['name'] . " " . $cart['variant_name'];
                                             $image = $cart['image_url'];
-                                            insert_order_details($variant_id, $product_id, $product_name, $image,  $quantity, $price_per_unit, $order_id);
+                                            insert_order_details($variant_id, $product_id, $product_name, $image, $quantity, $price_per_unit, $order_id);
                                             descrease_quantity_product_when_order_completed($variant_id, $quantity);
                                         }
                                         $_SESSION['carts'] = [];
@@ -333,7 +334,7 @@ include './model/users.php';
                                 $brand_id = $_GET['brand_id'];
                             }
                             $products = getall_product_shoppage($keyword, $minPrice, $maxPrice, $category_id, $brand_id, $page);
-                            $totalPages = ceil((int)$total_items['total'] / 6);
+                            $totalPages = ceil((int) $total_items['total'] / 6);
                             include('./view/shop.php');
                             break;
                         case 'product':
