@@ -4,7 +4,7 @@
             <h4 class="font-semibold text-3xl ">Add billboards</h4>
             <p class="text-neutral-500 mt-1">Add new billboard</p>
         </div>
-        sbbcha
+       jaschasjcackasbak
     </div>
     <div class="py-10">
         <form action="" method="post" enctype="multipart/form-data">
