@@ -1,67 +1,65 @@
-<div>
-    <div class="flex items-center justify-between border-b border-neutral-300 pb-5">
-        <div class="heading">
-            <h4 class="font-semibold text-3xl ">Add category</h4>
-            <p class="text-neutral-500 mt-1">Add new category</p>
+<div class="animate__animated animate__zoomIn animate__faster min-h-screen h-full ">
+    <div class="flex items-center justify-between border-b border-neutral-300 pb-5 px-2">
+        <div>
+            <h4 class="font-semibold text-3xl ">Billboards</h4>
+            <p class="text-neutral-500 mt-1">List of the billboard</p>
         </div>
+        <a class="btn md:btn-md btn-sm rounded-full bg-slate-700 hover:bg-slate-900 text-white  " href="index.php?act=add_billboard">
+            <p class="capitalize">Add new billboard</p>
+            <i class="bi bi-plus-circle text-xl"></i>
+        </a>
     </div>
-    <div class="py-10">
-        <form action="" method="post" enctype="multipart/form-data">
-            <div class="preview-image mb-4"></div>
-            <div class="flex flex-col space-y-2 w-full md:w-2/3 mb-6">
-                <label class="font-semibold" for="image_url">Upload image</label>
-                <input class="image-upload p-2 bg-neutral-100 rounded-md cursor-pointer" id="image_url" name="image_url" type="file">
-                <?php echo !empty($error['image_url']) ? '<span class="text-red-500 text-sm">' . $error['image_url'] . '</span>' : ""  ?>
-            </div>
-            <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
-                <div class="flex flex-col space-y-2">
-                    <label for="name" class="font-semibold">Name</label>
-                    <input type="text" class="form-input rounded text-slate-900" name="name" id="name" placeholder="Example: Gucci" />
-                    <?php echo !empty($error['name']) ? '<span class="text-red-500 text-sm">' . $error['name'] . '</span>' : ""  ?>
-                </div>
-                <div class="flex flex-col space-y-2">
-                    <label for="name" class="font-semibold">Name</label>
-                    <select class="px-4 py-[8px] rounded-md form-select" name="parent_id">
-                        <option value="">--Select parent category--</option>
+    <?php
+    if (count($list_billboard) > 0) {
+    ?>
+        <div class="w-full h-full mt-5 border border-neutral-200">
+            <table class="table lg:table-lg md:table-md sm:table-sm table-xs">
+                <!-- head -->
+                <thead class="bg-slate-700 text-white text-base">
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Sub Title</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($list_billboard as $billboard) {
+                        extract($billboard);
+                    ?>
+                        <tr>
+                            <th><?php echo $billboard_id ?></th>
+                            <td><?php echo $title ?></td>
+                            <td><?php echo $subtitle ?></td>
+                            <td><img class="w-[150px] h-[80px] object-cover border-2 border-neutral-400 rounded-md" src="../<?php echo $image_path  . $image_url ?>" alt="billboard"></td>
+                            <td>
+                                <div class="dropdown dropdown-bottom dropdown-end">
+                                    <label tabindex="0" class="cursor-pointer m-1">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </label>
+                                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
+                                        <li><a class=" font-semibold" href="index.php?act=update_billboard&billboard_id=<?php echo $billboard_id ?>"><i class="bi bi-pencil"></i> Update</a></li>
+                                        <li>
+                                            <a class=" font-semibold" href="index.php?act=delete_billboard&billboard_id=<?php echo $billboard_id ?>" onclick="confirmDelete(this.href); return false;"> <i class="bi bi-trash3"></i>Remove </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    <?php
+    } else {
+    ?>
+        <div class="w-full text-center py-10">No billboard created! Create now!</div>
+    <?php
+    }
+    ?>
 
-                        <?php
-                        foreach ($list_category as $category) {
-                        ?>
-                            <option class="block px-2 py-3" value="<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
-            <div class="flex flex-col space-y-2 mt-6 lg:w-2/3 w-full">
-                <label for="description" class="font-semibold">Description</label>
-                <textarea name="description" id="description" class="textarea textarea-bordered " placeholder="Bio"></textarea>
-                <?php echo !empty($error['description']) ? '<span class="text-red-500 text-sm">' . $error['description'] . '</span>' : ""  ?>
-            </div>
-            <button class="btn md:btn-md btn-sm capitalize rounded-full bg-slate-700 hover:bg-slate-900 text-white mt-5" type="submit" name="add_category">Add category</button>
-        </form>
-    </div>
 </div>
-
-<script>
-    const imageUpload = document.querySelector('.image-upload');
-    const previewContainer = document.querySelector('.preview-image')
-
-    imageUpload.addEventListener('change', function() {
-        previewContainer.innerHTML = "";
-        for (const file of imageUpload.files) {
-            if (file) {
-                const reader = new FileReader();
-                const img = document.createElement("img");
-                img.classList.add("product-upload-img");
-                reader.onload = function(e) {
-                    img.src = e.target.result;
-                };
-
-                reader.readAsDataURL(file);
-                previewContainer.appendChild(img);
-            }
-        }
-    });
-</script>
