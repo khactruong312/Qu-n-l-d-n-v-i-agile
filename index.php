@@ -185,6 +185,46 @@ include './model/users.php';
                             }
                             include('./view/auth/profile.php');
                             break;
+                        case 'view-cart':
+                            $carts = $_SESSION['carts'];
+                            include('./view/cart/view-cart.php');
+                            break;
+                        case 'addtocart':
+                            if (isset($_POST['add-to-cart'])) {
+                                $product_id = $_POST['product_id'];
+                                $name = $_POST['name'];
+                                $discount = $_POST['discount'];
+                                $image_url = $_POST['image_url'];
+                                $quantity = isset($_POST['quantity']) ? $_POST['quantity'] : 1;
+                                $variant_id = $_POST['variant_id'];
+
+                                $variant = getone_variant($variant_id);
+
+                                if (is_array($variant)) {
+                                    $dataCart = array(
+                                        'product_id' => $product_id,
+                                        'name' => $name,
+                                        'price' => floatval($variant['price']) - (floatval($variant['price']) / 100) * floatval($discount),
+                                        'image_url' => $image_url,
+                                        'quantity' => $quantity,
+                                        'variant_id' => $variant['variant_id'],
+                                        'variant_name' => $variant['variant_name'],
+                                        'variant_price' => $variant['price'],
+                                        'variant_stock' => $variant['quantity']
+                                    );
+                                    $_SESSION['carts'][] = $dataCart;
+                                    header('location: index.php?act=view-cart');
+                                }
+                            }
+                            break;
+                        case 'delete-cart':
+                            $_SESSION['carts'];
+                            if (isset($_GET['cart-id'])) {
+                                $cart_id = $_GET['cart-id'];
+                                unset($_SESSION['carts'][$cart_id]);
+                                header('location: index.php?act=view-cart');
+                            }
+                            break;
 
                         case 'checkout':
                             if (!$_SESSION['user']) {
