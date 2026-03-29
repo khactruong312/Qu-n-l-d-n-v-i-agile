@@ -95,14 +95,20 @@
         }
     }
 
-   
+    function validateEmail(email) {
+        const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}/g;
+        return regex.test(email)
+    }
 
     function validateName(name) {
         const regex = /^[A-Za-z ]+$/;
         return regex.test(name)
     }
 
-    
+    function validatePassword(pass) {
+        const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$/g
+        return regex.test(pass)
+    }
 
     function checkFormValidity() {
         if (validateEmail(inputEmail.value) && validateName(inputName.value) && validatePassword(inputPassword.value)) {
