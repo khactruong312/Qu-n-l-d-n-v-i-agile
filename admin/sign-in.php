@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../model/pdo.php';
+require_once '../model/pdo.php';
 include '../model/users.php';
 
 if (isset($_SESSION['admin'])) {

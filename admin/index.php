@@ -6,7 +6,7 @@ if (!isset($_SESSION['admin'])) {
     exit();
 }
 include '../global.php';
-include '../model/pdo.php';
+require_once '../model/pdo.php';
 include '../model/billboards.php';
 include '../model/brands.php';
 include '../model/categories.php';
