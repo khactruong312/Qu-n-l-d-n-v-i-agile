@@ -9,6 +9,7 @@
             <i class="bi bi-plus-circle text-xl"></i>
         </a>
     </div>
+
     <?php
     if (count($list_billboard) > 0) {
     ?>
