@@ -71,7 +71,7 @@
             </table>
         </div>
     <?php
-    } else {
+    } else { 
     ?>
         <div class="w-full text-center py-10">No brand created! Create now!</div>
     <?php
