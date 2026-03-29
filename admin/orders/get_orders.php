@@ -1,5 +1,5 @@
 <?php
-include "../../model/pdo.php";
+require_once "../../model/pdo.php";
 include "../../model/orders.php";
 include '../../global.php';
 
@@ -16,7 +16,7 @@ if (count($orders) > 0) {
         extract($order);
         $order_details = getall_order_details_by_orderId($order_id);
         $order_statuss = get_OrderStatus();
-?>
+        ?>
         <div class="rounded-lg border p-4">
             <h3 class="font-semibold text-xl">Order ID: <?php echo $order_id ?></h3>
             <?php echo order_item($order, $order_details) ?>
@@ -38,29 +38,30 @@ if (count($orders) > 0) {
                                 foreach ($order_statuss as $key => $status) {
                                     $status = trim($status, "'");
                                     if ($key < $currentSelectedKey) {
-                                ?>
+                                        ?>
                                         <option disabled value="<?php echo $status ?>"><?php echo $status ?></option>
-                                    <?php
+                                        <?php
                                     } else {
-                                    ?>
+                                        ?>
                                         <option class="" value="<?php echo $status ?>" <?php echo $status === $order_status ? "selected" : "" ?>><?php echo $status ?></option>
-                                <?php
+                                        <?php
                                     }
                                 }
                                 ?>
                             </select>
                         </div>
-                        <button type="submit" name="update_order" class="capitalize btn bg-slate-700 hover:bg-slate-800 text-white rounded-full ">Update</button>
+                        <button type="submit" name="update_order"
+                            class="capitalize btn bg-slate-700 hover:bg-slate-800 text-white rounded-full ">Update</button>
                     </div>
                 </form>
             </div>
         </div>
-    <?php
+        <?php
     }
 } else {
     ?>
     <div class="h-full w-full p-20 grid place-items-center">
         <p class="text-sm">No orders found!</p>
     </div>
-<?php
+    <?php
 }

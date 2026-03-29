@@ -5,7 +5,7 @@ if (!isset($_SESSION['carts']))
     $_SESSION['carts'] = [];
 
 include './global.php';
-include './model/pdo.php';
+require_once './model/pdo.php';
 include './model/billboards.php';
 include './model/categories.php';
 include './model/products.php';

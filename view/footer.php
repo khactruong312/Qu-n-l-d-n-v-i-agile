@@ -1,7 +1,7 @@
 <footer class="footer bg-slate-900 text-white p-10 bg-base-200 text-base-content w-full">
     <aside>
         <img src="./assets/img/logo-w.svg" alt="logo" class="w-16 h-16">
-        <p class="font-bold">TKQ Shop llc.<br />FPT Polytechnic 2023</p>
+        <p class="font-bold">TKQ Shop llc.<br />FPT Polytechnic 2025</p>
     </aside>
     <nav>
         <header class="footer-title">Services</header>
