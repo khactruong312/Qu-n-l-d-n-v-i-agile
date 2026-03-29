@@ -500,7 +500,7 @@
                 </div>
             </div>
         </div>
-        <div class="wt-body-max-width blog-home">
+       <div class="wt-body-max-width blog-home">
             <div class="wt-display-flex-xs wt-flex-direction-row-md wt-flex-direction-column-reverse-xs wt-align-items-center most-recent-article">
                 <div class="wt-flex-md-1 wt-pl-xs-8 wt-pr-xs-8 wt-text-center-xs">
                     <div class="categories-card-section wt-text-caption wt-pt-xs-3 wt-text-black">
@@ -523,4 +523,4 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>     
