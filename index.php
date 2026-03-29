@@ -386,9 +386,4 @@ include './model/users.php';
     <script src="./assets/js/shopping-modal.js"></script>
 </body>
 
-<<<<<<< HEAD
 </html>
-=======
-</html>
-
->>>>>>> 2431ceb572b8a12ca5ab3ec607c36bf098d7b415
