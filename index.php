@@ -354,9 +354,16 @@ include './model/users.php';
                                 header('location: index.php');
                             }
                             break;
-                        case 'list_post':
-                            include('view/userposts/viewpost.php');
+                        case 'faqs':
+                            include('./view/faqs.php');
                             break;
+                        case 'about':
+                            include('./view/about.php');
+                            break;
+                        case 'contact':
+                            include('./view/contact.php');
+                            break;
+
                         default:
                             $billboards = getall_billboard();
                             $categories = getall_category();
@@ -387,4 +394,3 @@ include './model/users.php';
 </body>
 
 </html>
-
