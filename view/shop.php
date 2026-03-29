@@ -120,4 +120,4 @@
             window.location.href = currentUrl.href
         })
     })
-</script>
+</script> 
