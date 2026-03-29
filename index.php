@@ -5,7 +5,7 @@ if (!isset($_SESSION['carts']))
     $_SESSION['carts'] = [];
 
 include './global.php';
-include './model/pdo.php';
+require_once './model/pdo.php';
 include './model/billboards.php';
 include './model/categories.php';
 include './model/products.php';
@@ -354,9 +354,16 @@ include './model/users.php';
                                 header('location: index.php');
                             }
                             break;
-                        case 'list_post':
-                            include('view/userposts/viewpost.php');
+                        case 'faqs':
+                            include('./view/faqs.php');
                             break;
+                        case 'about':
+                            include('./view/about.php');
+                            break;
+                        case 'contact':
+                            include('./view/contact.php');
+                            break;
+
                         default:
                             $billboards = getall_billboard();
                             $categories = getall_category();

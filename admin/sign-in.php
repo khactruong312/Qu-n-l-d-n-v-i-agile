@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../model/pdo.php';
+require_once '../model/pdo.php';
 include '../model/users.php';
 
 if (isset($_SESSION['admin'])) {
@@ -94,7 +94,7 @@ if (isset($_POST['login'])) {
                 </div>
             </form>
             <p class="text-center text-gray-500 text-xs">
-                &copy;2023 Admin. All rights reserved.
+                &copy;2025 Admin. All rights reserved.
             </p>
         </div>
     </div>

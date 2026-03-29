@@ -4,7 +4,7 @@
             <div class="p-2 cursor-pointer show-mobile-nav"><i class="bi bi-list text-3xl"></i></div>
         </div>
         <div class="items-center space-x-3 lg:pr-16 pr-6 shrink hidden md:flex">
-            <a href="index.php"><img src="./assets/img/logo.svg" alt="logo" class="w-14 h-14"></a>
+            <a href="index.php"><img src="./assets/img/logo.png" alt="logo" class="w-14 h-14"></a>
         </div>
         <nav class="flex justify-between">
             <ul class="md:flex items-center space-x-4 hidden">
@@ -12,16 +12,13 @@
                     <a href="index.php?act=shop" class="font-medium text-sm  text-slate-500 hover:text-slate-800 <?php echo isset($_GET['act']) && $_GET['act'] === "shop" ? "text-slate-800 font-medium" : "" ?>">Shop</a>
                 </li>
                 <li>
-                    <a href=" index.php" class="font-medium text-sm  text-slate-500 hover:text-slate-800 <?php echo isset($_GET['act']) && $_GET['act'] === "aboutus" ? "text-slate-800 font-medium" : "" ?>">About us</a>
+                    <a href="index.php?act=about" class="font-medium text-sm  text-slate-500 hover:text-slate-800 <?php echo isset($_GET['act']) && $_GET['act'] === "aboutus" ? "text-slate-800 font-medium" : "" ?>">About us</a>
                 </li>
                 <li>
-                    <a href="index.php" class="font-medium text-sm  text-slate-500 hover:text-slate-800 <?php echo isset($_GET['act']) && $_GET['act'] === "contact" ? "text-slate-800 font-medium" : "" ?>">Contact us</a>
+                    <a href="index.php?act=contact" class="font-medium text-sm  text-slate-500 hover:text-slate-800 <?php echo isset($_GET['act']) && $_GET['act'] === "contact" ? "text-slate-800 font-medium" : "" ?>">Contact us</a>
                 </li>
                 <li>
-                    <a href="index.php" class="font-medium text-sm  text-slate-500 hover:text-slate-800 <?php echo isset($_GET['act']) && $_GET['act'] === "faqs" ? "text-slate-800 font-medium" : "" ?>">Faqs</a>
-                </li>
-                <li>
-                    <a href="index.php?act=list_post" class="font-medium text-sm  text-slate-500 hover:text-slate-800 <?php echo isset($_GET['act']) && $_GET['act'] === "Posts" ? "text-slate-800 font-medium" : "" ?>">Post</a>
+                    <a href="index.php?act=faqs" class="font-medium text-sm  text-slate-500 hover:text-slate-800 <?php echo isset($_GET['act']) && $_GET['act'] === "faqs" ? "text-slate-800 font-medium" : "" ?>">Faqs</a>
                 </li>
             </ul>
         </nav>

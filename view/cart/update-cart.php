@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../../model/pdo.php";
+require_once "../../model/pdo.php";
 include "../../model/comments.php";
 include "../../model/users.php";
 
@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     foreach ($_SESSION['carts'] as $cart) {
         extract($cart);
-        $totalPrice += (int)($price) * (int)($quantity);
+        $totalPrice += (int) ($price) * (int) ($quantity);
     }
     echo json_encode(['success' => true, 'totalPrice' => $totalPrice, 'carts' => $_SESSION['carts']]);
 }
