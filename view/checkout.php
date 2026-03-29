@@ -122,7 +122,7 @@
 
             let newTotalPrice = <?php echo $totalPrice; ?> + Number(selectedShippingType.shipping_type_price);
             document.querySelector('.total-price').textContent = '$' + newTotalPrice
-            documeny.getElementById('total-price').value = newTotalPrice;
+            document.getElementById('total-price').value = newTotalPrice;
         })
     })
 </script>

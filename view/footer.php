@@ -1,7 +1,7 @@
 <footer class="footer bg-slate-900 text-white p-10 bg-base-200 text-base-content w-full">
     <aside>
-        <img src="./assets/img/logo-w.svg" alt="logo" class="w-16 h-16">
-        <p class="font-bold">TKQ Shop llc.<br />FPT Polytechnic 2025</p>
+        <img src="./assets/img/logo.png" alt="logo" class="w-16 h-16" style="border-radius: 20px;">
+        <p class="font-bold">TDVM Shop llc.<br />FPT Polytechnic 2025</p>
     </aside>
     <nav>
         <header class="footer-title">Services</header>
@@ -12,8 +12,8 @@
     </nav>
     <nav>
         <header class="footer-title">Company</header>
-        <a class="link link-hover">About us</a>
-        <a class="link link-hover">Contact</a>
+        <a href="index.php?act=about">About us</a>
+        <a href="index.php?act=contact">Contact</a>
         <a class="link link-hover">Jobs</a>
         <a class="link link-hover">Press kit</a>
     </nav>

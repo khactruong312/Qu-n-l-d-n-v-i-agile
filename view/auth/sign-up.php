@@ -1,7 +1,7 @@
 <div class="h-screen w-full flex items-center justify-center">
     <div class="bg-white w-[500px] rounded-lg p-5 shadow-lg animate__animated animate__bounceInDown">
         <div class="flex items-center flex-col space-y-4">
-            <img src="./assets/img/logo.svg" alt="logo" class="w-14 h-14">
+            <img src="./assets/img/logo.png" alt="logo" class="w-17 h-14">
             <h4 class="text-center uppercase font-bold text-2xl text-slate-900 ">Create Account</h4>
         </div>
         <form class="mb-4 w-full" id="sign-up-form" method="post" action="index.php?act=sign-up">
