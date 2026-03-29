@@ -10,14 +10,16 @@
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
                         Username
                     </label>
-                    <input class="form-input ring-0 outline-none text-sm rounded-md w-full" id="name" name="name" type="text" placeholder="Ex: David">
+                    <input class="form-input ring-0 outline-none text-sm rounded-md w-full" id="name" name="name"
+                        type="text" placeholder="Ex: David">
                     <span class="form-message text-xs text-red-600"></span>
                 </div>
                 <div class="form-group">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
                         Email
                     </label>
-                    <input class="form-input ring-0 outline-none text-sm rounded-md w-full" id="email" name="email" type="email" placeholder="example@domain.com">
+                    <input class="form-input ring-0 outline-none text-sm rounded-md w-full" id="email" name="email"
+                        type="email" placeholder="example@domain.com">
                     <span class="form-message text-xs text-red-6000"></span>
                 </div>
                 <div class="relative form-group">
@@ -25,17 +27,21 @@
                         Password
                     </label>
                     <div class="relative">
-                        <input class="form-input ring-0 outline-none text-sm rounded-md w-full pr-[50px]" id="password" name="password" type="password">
-                        <div class="toggle-show-password absolute cursor-pointer h-[40px] w-[40px] right-1 top-[0%]  flex items-center justify-center">
+                        <input class="form-input ring-0 outline-none text-sm rounded-md w-full pr-[50px]" id="password"
+                            name="password" type="password">
+                        <div
+                            class="toggle-show-password absolute cursor-pointer h-[40px] w-[40px] right-1 top-[0%]  flex items-center justify-center">
                             <i class="bi bi-eye "></i>
                         </div>
                     </div>
                     <span class="form-message text-xs text-red-600 relative leading-3"></span>
                 </div>
-                <button class="btn md:btn-md btn-sm capitalize bg-slate-700 hover:bg-slate-800 w-full text-white btn-disabled" type="submit" name="sign-up" id="sign-up">
+                <button
+                    class="btn md:btn-md btn-sm capitalize bg-slate-700 hover:bg-slate-800 w-full text-white btn-disabled"
+                    type="submit" name="sign-up" id="sign-up">
                     Create account
                 </button>
-                <?php echo !empty($registerError) ? '<span class="text-red-500 text-sm">' . $registerError . '</span>' : ""  ?>
+                <?php echo !empty($registerError) ? '<span class="text-red-500 text-sm">' . $registerError . '</span>' : "" ?>
             </div>
         </form>
         <p class="text-sm text-center">
@@ -52,21 +58,21 @@
     const signUpForm = document.getElementById('sign-up-form')
     const togglePassword = document.querySelector('.toggle-show-password')
 
-    inputEmail.addEventListener('input', function() {
+    inputEmail.addEventListener('input', function () {
         const isValid = validateEmail(this.value)
         toggleShowFormMessage(isValid, this, "Valid email!", "Invalid email!");
         checkFormValidity()
 
     })
 
-    inputName.addEventListener('input', function() {
+    inputName.addEventListener('input', function () {
         const isValid = validateName(this.value)
         toggleShowFormMessage(isValid, this, "Valid username!", "Invalid username!");
         checkFormValidity()
 
     })
 
-    inputPassword.addEventListener('input', function() {
+    inputPassword.addEventListener('input', function () {
         const isValid = validatePassword(this.value)
         toggleShowFormMessage(isValid, this, "Valid pasword!", "Minimum password is 6 characters, contains at least 1 uppercase letter, number and special character");
         checkFormValidity()
@@ -123,7 +129,7 @@
         }
     })
 
-    signUpBtn.addEventListener('click', function() {
+    signUpBtn.addEventListener('click', function () {
 
 
 
