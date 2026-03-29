@@ -1,20 +1,27 @@
 <div class="animate__animated animate__zoomIn animate__faster min-h-screen h-full ">
+
     <div class="flex items-center justify-between border-b border-neutral-300 pb-5 px-2">
+
         <div>
             <h4 class="font-semibold text-3xl ">Billboards</h4>
             <p class="text-neutral-500 mt-1">List of the billboard</p>
         </div>
+
         <a class="btn md:btn-md btn-sm rounded-full bg-slate-700 hover:bg-slate-900 text-white  " href="index.php?act=add_billboard">
             <p class="capitalize">Add new billboard</p>
             <i class="bi bi-plus-circle text-xl"></i>
         </a>
+
     </div>
+
     <?php
     if (count($list_billboard) > 0) {
     ?>
         <div class="w-full h-full mt-5 border border-neutral-200">
+
             <table class="table lg:table-lg md:table-md sm:table-sm table-xs">
                 <!-- head -->
+
                 <thead class="bg-slate-700 text-white text-base">
                     <tr>
                         <th>ID</th>
@@ -24,6 +31,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <?php
                     foreach ($list_billboard as $billboard) {
@@ -52,12 +60,18 @@
                     }
                     ?>
                 </tbody>
+
+
             </table>
+
         </div>
+
     <?php
     } else {
     ?>
+
         <div class="w-full text-center py-10">No billboard created! Create now!</div>
+        
     <?php
     }
     ?>
