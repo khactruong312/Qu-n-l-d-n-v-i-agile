@@ -22,4 +22,4 @@
             <button class="btn md:btn-md btn-sm capitalize rounded-full bg-slate-700 hover:bg-slate-900 text-white mt-5" type="submit" name="add_brand">Add brand</button>
         </form>
     </div>
-</div>     
+</div>
