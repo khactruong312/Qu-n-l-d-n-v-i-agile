@@ -213,7 +213,7 @@ include './model/users.php';
                                         'variant_stock' => $variant['quantity']
                                     );
                                     $_SESSION['carts'][] = $dataCart;
-                                    header('location: index.php?act=view-cart');
+                                    header('location: index.php?act=index.php');
                                 }
                             }
                             break;
@@ -363,7 +363,12 @@ include './model/users.php';
                         case 'contact':
                             include('./view/contact.php');
                             break;
-
+                        case 'orders':
+                            include './view/orders.php';
+                            break;
+                        case 'order_detail':
+                            include './view/order_detail.php';
+                            break;
                         default:
                             $billboards = getall_billboard();
                             $categories = getall_category();
