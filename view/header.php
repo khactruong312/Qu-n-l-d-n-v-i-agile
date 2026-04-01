@@ -36,6 +36,11 @@
                     if (isset($_SESSION['user'])) {
                     ?>
                         <li><a href="index.php?act=profile&user_id=<?php echo $_SESSION['user']['user_id'] ?>">My profile</a></li>
+                          <li>
+                            <a href="index.php?act=orders">
+                                Lịch sử đơn hàng
+                            </a>
+                        </li>
                         <li><a href="index.php?act=sign-out">Sign Out</a></li>
                     <?php
                     } else {
