@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 <?php
 
 function get_total_amount()
@@ -96,3 +98,4 @@ function top_5_bestseller_product()
      LIMIT 5";
     return pdo_query($sql);
 }
+>>>>>>> 1b8ecff851c7be789544b7b779e5f975a38526de
