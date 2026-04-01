@@ -144,7 +144,6 @@ include '../model/comments.php';
                             $keyword = "";
                             if (isset($_POST['filter_br'])) {
                                 $keyword = $_POST['keyword'];
-
                             } else {
                                 $keyword = "";
                             }

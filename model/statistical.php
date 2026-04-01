@@ -4,7 +4,7 @@ function get_total_amount()
 {
     $sql = "SELECT SUM(total_amount) as total from orders";
     $total_amount = pdo_query_one($sql);
-    $total_amount = number_format($total_amount['total'], 0, '.', '');
+    $total_amount = number_format((float)($total_amount['total'] ?? 0), 0, '.', '');
     return $total_amount;
 }
 
@@ -12,7 +12,7 @@ function get_paid_amount()
 {
     $sql = "SELECT SUM(total_amount) as total from orders WHERE payment_status='Succeeded'";
     $total_amount = pdo_query_one($sql);
-    $total_amount = number_format($total_amount['total'], 0, '.', '');
+    $total_amount = number_format((float)($total_amount['total'] ?? 0), 0, '.', '');
     return $total_amount;
 }
 
@@ -20,7 +20,7 @@ function get_unpaid_amount()
 {
     $sql = "SELECT SUM(total_amount) as total from orders WHERE payment_status='Processing'";
     $total_amount = pdo_query_one($sql);
-    $total_amount = number_format($total_amount['total'], 0, '.', '');
+    $total_amount = number_format((float)($total_amount['total'] ?? 0), 0, '.', '');
     return $total_amount;
 }
 
@@ -28,7 +28,7 @@ function get_return_amount()
 {
     $sql = "SELECT SUM(total_amount) as total from orders WHERE payment_status='Return'";
     $total_amount = pdo_query_one($sql);
-    $total_amount = number_format($total_amount['total'], 0, '.', '');
+    $total_amount = number_format((float)($total_amount['total'] ?? 0), 0, '.', '');
     return $total_amount;
 }
 
