@@ -134,8 +134,7 @@ function order_item($order, $order_details, $client_side = false, $continue = fa
                     extract($orderDetail);
                     ?>
                     <div class="flex items-center space-x-3">
-                        <img src="<?php echo $client_side ? "./upload/" : "../upload/" ?>
-                <?php echo $image ?>" alt="" class="w-[90px] h-[70px] rounded-md">
+                        <img src="/QU-N-L-D-N-V-I-AGILE/upload/<?php echo $image ?>" alt="" class="w-[90px] h-[70px] rounded-md">
                         <div class="flex flex-col space-y-2">
                             <p class="text-sm font-medium">
                                 <?php echo $product_name ?>
