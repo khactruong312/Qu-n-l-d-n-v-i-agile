@@ -397,7 +397,6 @@ include './model/users.php';
     <script src="./assets/js/index.js"></script>
     <script src="./assets/js/shopping-modal.js"></script>
 </body>
-
 </html>
 <?php
 session_start();
@@ -798,7 +797,6 @@ include './model/users.php';
     <script src="./assets/js/index.js"></script>
     <script src="./assets/js/shopping-modal.js"></script>
 </body>
-
 </html>
 <?php
 session_start();
@@ -1199,5 +1197,4 @@ include './model/users.php';
     <script src="./assets/js/index.js"></script>
     <script src="./assets/js/shopping-modal.js"></script>
 </body>
-
 </html>
