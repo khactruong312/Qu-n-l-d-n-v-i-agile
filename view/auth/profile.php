@@ -2,7 +2,6 @@
     <div class=" mx-auto max-w-[1200px] rounded-md bg-white border">
         <ul class="flex items-center justify-between">
             <li class="infor-tab flex items-center justify-center w-full rounded-md p-4 cursor-pointer transition">My Information</li>
-            <li class="infor-tab flex items-center justify-center w-full rounded-md p-4 cursor-pointer transition">My Orders</li>
         </ul>
         <div>
             <div class="panel hidden p-4 md-p-8">
@@ -66,28 +65,6 @@
 
                     <button class="btn md:btn-md btn-sm capitalize rounded-full bg-slate-700 hover:bg-slate-900 text-white mt-5" type="submit" name="update_user">Update user</button>
                 </form>
-            </div>
-            <div class="panel hidden p-4 md-p-8">
-                <div class="flex flex-col space-y-6">
-                    <?php
-                    if (count($orders) > 0) {
-                        foreach ($orders as $key => $order) {
-                            extract($order);
-                            $order_details = getall_order_details_by_orderId($order_id);
-                    ?>
-                            <div class="rounded-lg border p-4">
-                                <h3 class="font-semibold text-xl">Order ID: <?php echo $order_id ?></h3>
-                                <?php echo order_item($order, $order_details, true) ?>
-                            </div>
-                        <?php
-                        }
-                    } else {
-                        ?>
-                        <div class="p-10">You don't have order! Shopping now!</div>
-                    <?php
-                    }
-                    ?>
-                </div>
             </div>
         </div>
     </div>
