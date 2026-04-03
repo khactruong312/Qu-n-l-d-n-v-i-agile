@@ -1,3 +1,4 @@
+
 <?php
 
 function get_total_amount()
@@ -84,7 +85,6 @@ function top_5_most_views_product()
     return pdo_query($sql);
 }
 
-// top 5 sản phẩm mua nhiều nhất
 
 function top_5_bestseller_product()
 {
