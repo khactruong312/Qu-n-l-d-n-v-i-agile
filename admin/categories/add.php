@@ -18,10 +18,8 @@
     if (count($list_billboard) > 0) {
     ?>
         <div class="w-full h-full mt-5 border border-neutral-200">
-
             <table class="table lg:table-lg md:table-md sm:table-sm table-xs">
                 <!-- head -->
-
                 <thead class="bg-slate-700 text-white text-base">
                     <tr>
                         <th>ID</th>
@@ -31,7 +29,6 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     <?php
                     foreach ($list_billboard as $billboard) {
@@ -60,20 +57,13 @@
                     }
                     ?>
                 </tbody>
-
-
             </table>
-
         </div>
-
     <?php
     } else {
     ?>
-
         <div class="w-full text-center py-10">No billboard created! Create now!</div>
-        
     <?php
     }
     ?>
-
-</div> 
+</div>
