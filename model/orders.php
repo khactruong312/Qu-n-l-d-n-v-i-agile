@@ -60,8 +60,22 @@ function insert_order($username, $email, $phone, $order_note, $createdAt, $total
 /// insert order details
 function insert_order_details($variant_id, $product_id, $product_name, $image, $quantity, $price_per_unit, $order_id)
 {
-    $sql = "INSERT INTO order_details (variant_id, product_id,product_name, image, quantity, price_per_unit, order_id) VALUES(?,?,?,?,?,?,?)";
-    pdo_execute($sql, $variant_id, $product_id, $product_name, $image, $quantity, $price_per_unit, $order_id);
+    $sql = "SELECT * FROM order_details 
+            WHERE order_id = ? AND product_id = ? AND variant_id = ?";
+    
+    $exist = pdo_query_one($sql, $order_id, $product_id, $variant_id);
+
+    if ($exist) {
+        $sql = "UPDATE order_details 
+                SET quantity = quantity + ? 
+                WHERE order_id = ? AND product_id = ? AND variant_id = ?";
+        pdo_execute($sql, $quantity, $order_id, $product_id, $variant_id);
+    } else {
+        $sql = "INSERT INTO order_details 
+        (variant_id, product_id, product_name, image, quantity, price_per_unit, order_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)";
+        pdo_execute($sql, $variant_id, $product_id, $product_name, $image, $quantity, $price_per_unit, $order_id);
+    }
 }
 // get all order details of order ID
 function getall_order_details_by_orderId($order_id)
