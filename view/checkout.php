@@ -119,7 +119,7 @@
                         </div>
 
                         <div class="flex items-center mt-1">
-                            
+
                             <i class="bi bi-arrow-left mr-2"></i>
 
                             <a href="index.php" class="text-xs">Continue to shopping</a>
