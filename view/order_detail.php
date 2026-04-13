@@ -79,12 +79,23 @@ $order_details = getall_order_details_by_orderId($order_id);
             </div>
             <div>
                 <span class="font-medium">Trạng thái đơn hàng:</span>
-                <div class="mt-1 badge text-white px-2 py-1
-                    <?php echo $order['order_status'] === 'Processing' ? 'bg-orange-500' : '' ?>
-                    <?php echo $order['order_status'] === 'In Transit' ? 'bg-blue-500' : '' ?>
-                    <?php echo $order['order_status'] === 'Delivered' ? 'bg-green-500' : '' ?>
-                    <?php echo $order['order_status'] === 'Cancelled' ? 'bg-red-500' : '' ?>">
-                    <?php echo $order['order_status'] ?>
+                <?php
+                $normalizedOrderStatus = trim($order['order_status']);
+                $lowerOrderStatus = strtolower($normalizedOrderStatus);
+                $orderStatusClass = 'bg-gray-500';
+                if ($lowerOrderStatus === 'processing') {
+                    $orderStatusClass = 'bg-orange-500';
+                } elseif ($lowerOrderStatus === 'in transit') {
+                    $orderStatusClass = 'bg-blue-500';
+                } elseif ($lowerOrderStatus === 'delivered') {
+                    $orderStatusClass = 'bg-green-500';
+                } elseif ($lowerOrderStatus === 'cancelled' || $lowerOrderStatus === 'returned' || $lowerOrderStatus === 'return') {
+                    $orderStatusClass = 'bg-red-500';
+                }
+                $orderStatusLabel = $normalizedOrderStatus !== '' ? $normalizedOrderStatus : 'Unknown';
+                ?>
+                <div class="mt-1 badge text-white px-2 py-1 <?php echo $orderStatusClass ?>">
+                    <?php echo $orderStatusLabel ?>
                 </div>
             </div>
         </div>

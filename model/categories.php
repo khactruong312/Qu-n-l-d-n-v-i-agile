@@ -14,7 +14,7 @@ function getone_category($category_id)
 
 function insert_category($name, $description, $image_url, $parent_id)
 {
-    $sql = "INSERT INTO categories (name, description,image_url, parent_id) VALUES (?,?,?)";
+    $sql = "INSERT INTO categories (name, description, image_url, parent_id) VALUES (?, ?, ?, ?)";
     pdo_execute($sql, $name, $description, $image_url, $parent_id);
 }
 

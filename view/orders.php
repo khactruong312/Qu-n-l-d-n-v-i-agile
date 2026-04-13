@@ -5,7 +5,7 @@ if (!isset($_SESSION['user'])) {
 ?>
     <div class="flex justify-center items-center h-[60vh]">
         <div class="bg-white shadow-lg rounded-2xl p-8 text-center max-w-md w-full">
-            
+
             <!-- ICON / IMAGE -->
             <div class="mb-4">
                 <img src="assets/img/empty_cart.png" alt="login required" class="mx-auto w-24 h-24">
@@ -19,8 +19,8 @@ if (!isset($_SESSION['user'])) {
                 Vui lòng đăng nhập để xem lịch sử đơn hàng của bạn
             </p>
 
-            <a href="index.php?act=login" 
-               class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg transition">
+            <a href="index.php?act=login"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg transition">
                 🔑 Đăng nhập ngay
             </a>
 
@@ -50,67 +50,76 @@ $orders = getall_order_by_userId($user_id);
     <?php } else { ?>
 
         <div class="space-y-6">
-            <?php foreach ($orders as $order) { 
+            <?php foreach ($orders as $order) {
                 $order_details = getall_order_details_by_orderId($order['order_id']);
             ?>
 
-            <div class="bg-white p-5 rounded-xl shadow hover:shadow-lg transition">
+                <div class="bg-white p-5 rounded-xl shadow hover:shadow-lg transition">
 
-                <!-- HEADER -->
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-lg">
-                        #TKQ00<?php echo $order['order_id'] ?>
-                    </h3>
+                    <!-- HEADER -->
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-lg">
+                            #TKQ00<?php echo $order['order_id'] ?>
+                        </h3>
 
-                    <span class="text-xs px-3 py-1 rounded-full
-                        <?php 
-                            if ($order['order_status'] == 'Processing') echo 'bg-orange-200 text-orange-700';
-                            if ($order['order_status'] == 'In Transit') echo 'bg-blue-200 text-blue-700';
-                            if ($order['order_status'] == 'Delivered') echo 'bg-green-200 text-green-700';
-                            if ($order['order_status'] == 'Cancelled') echo 'bg-red-200 text-red-700';
-                        ?>">
-                        <?php echo $order['order_status'] ?>
-                    </span>
-                </div>
+                        <?php
+                        $orderStatusLabel = trim($order['order_status']);
+                        $orderStatusLower = strtolower($orderStatusLabel);
+                        $orderStatusClass = 'bg-gray-200 text-gray-700';
+                        if ($orderStatusLower === 'processing') {
+                            $orderStatusClass = 'bg-orange-200 text-orange-700';
+                        } elseif ($orderStatusLower === 'in transit') {
+                            $orderStatusClass = 'bg-blue-200 text-blue-700';
+                        } elseif ($orderStatusLower === 'delivered') {
+                            $orderStatusClass = 'bg-green-200 text-green-700';
+                        } elseif ($orderStatusLower === 'cancelled' || $orderStatusLower === 'returned' || $orderStatusLower === 'return') {
+                            $orderStatusClass = 'bg-red-200 text-red-700';
+                        }
+                        ?>
 
-                <!-- DATE -->
-                <p class="text-sm text-gray-400 mb-3">
-                    Ngày: <?php echo $order['created_at'] ?>
-                </p>
+                        <span class="text-xs px-3 py-1 rounded-full <?php echo $orderStatusClass ?>">
+                            <?php echo $orderStatusLabel !== '' ? $orderStatusLabel : 'Unknown' ?>
+                        </span>
+                    </div>
 
-                <!-- ITEMS -->
-                <div class="space-y-2 border-t border-b py-2">
-                    <?php foreach ($order_details as $item) { ?>
-                        <div class="flex justify-between text-sm">
-                            <span><?php echo $item['product_name'] ?> (x<?php echo $item['quantity'] ?>)</span>
-                            <span>$<?php echo $item['price_per_unit'] ?></span>
-                        </div>
-                    <?php } ?>
-                </div>
+                    <!-- DATE -->
+                    <p class="text-sm text-gray-400 mb-3">
+                        Ngày: <?php echo $order['created_at'] ?>
+                    </p>
 
-                <!-- TOTAL -->
-                <div class="flex justify-between mt-3 font-semibold text-gray-700">
-                    <span>Tổng:</span>
-                    <span>$<?php echo $order['total_amount'] ?></span>
-                </div>
+                    <!-- ITEMS -->
+                    <div class="space-y-2 border-t border-b py-2">
+                        <?php foreach ($order_details as $item) { ?>
+                            <div class="flex justify-between text-sm">
+                                <span><?php echo $item['product_name'] ?> (x<?php echo $item['quantity'] ?>)</span>
+                                <span>$<?php echo $item['price_per_unit'] ?></span>
+                            </div>
+                        <?php } ?>
+                    </div>
 
-                <!-- ACTION -->
-                <div class="mt-3 flex gap-3">
-                    <a href="index.php?act=order_detail&order_id=<?php echo $order['order_id'] ?>" 
-                       class="text-blue-500 text-sm hover:underline">
-                        Xem chi tiết
-                    </a>
+                    <!-- TOTAL -->
+                    <div class="flex justify-between mt-3 font-semibold text-gray-700">
+                        <span>Tổng:</span>
+                        <span>$<?php echo $order['total_amount'] ?></span>
+                    </div>
 
-                    <?php if ($order['order_status'] == 'Processing') { ?>
-                        <a href="index.php?act=cancel_order&order_id=<?php echo $order['order_id'] ?>" 
-                           class="text-red-500 text-sm hover:underline"
-                           onclick="return confirm('Bạn có chắc muốn hủy đơn này?');">
-                            Hủy đơn
+                    <!-- ACTION -->
+                    <div class="mt-3 flex gap-3">
+                        <a href="index.php?act=order_detail&order_id=<?php echo $order['order_id'] ?>"
+                            class="text-blue-500 text-sm hover:underline">
+                            Xem chi tiết
                         </a>
-                    <?php } ?>
-                </div>
 
-            </div>
+                        <?php if ($order['order_status'] == 'Processing') { ?>
+                            <a href="index.php?act=cancel_order&order_id=<?php echo $order['order_id'] ?>"
+                                class="text-red-500 text-sm hover:underline"
+                                onclick="return confirm('Bạn có chắc muốn hủy đơn này?');">
+                                Hủy đơn
+                            </a>
+                        <?php } ?>
+                    </div>
+
+                </div>
 
             <?php } ?>
         </div>
