@@ -201,19 +201,36 @@ include './model/users.php';
                                 $variant = getone_variant($variant_id);
 
                                 if (is_array($variant)) {
-                                    $dataCart = array(
-                                        'product_id' => $product_id,
-                                        'name' => $name,
-                                        'price' => floatval($variant['price']) - (floatval($variant['price']) / 100) * floatval($discount),
-                                        'image_url' => $image_url,
-                                        'quantity' => $quantity,
-                                        'variant_id' => $variant['variant_id'],
-                                        'variant_name' => $variant['variant_name'],
-                                        'variant_price' => $variant['price'],
-                                        'variant_stock' => $variant['quantity']
-                                    );
-                                    $_SESSION['carts'][] = $dataCart;
-                                    header('location: index.php?act=index.php');
+
+                                    $found = false;
+
+                                    // 👉 kiểm tra đã có trong cart chưa
+                                    foreach ($_SESSION['carts'] as &$item) {
+                                        if ($item['product_id'] == $product_id && $item['variant_id'] == $variant_id) {
+                                            $item['quantity'] += $quantity; // 🔥 cộng số lượng
+                                            $found = true;
+                                            break;
+                                        }
+                                    }
+
+                                    // 👉 nếu chưa có thì thêm mới
+                                    if (!$found) {
+                                        $dataCart = array(
+                                            'product_id' => $product_id,
+                                            'name' => $name,
+                                            'price' => floatval($variant['price']) - (floatval($variant['price']) / 100) * floatval($discount),
+                                            'image_url' => $image_url,
+                                            'quantity' => $quantity,
+                                            'variant_id' => $variant['variant_id'],
+                                            'variant_name' => $variant['variant_name'],
+                                            'variant_price' => $variant['price'],
+                                            'variant_stock' => $variant['quantity']
+                                        );
+
+                                        $_SESSION['carts'][] = $dataCart;
+                                    }
+
+                                    header('location: index.php?act=view-cart');
                                 }
                             }
                             break;
@@ -397,4 +414,5 @@ include './model/users.php';
     <script src="./assets/js/index.js"></script>
     <script src="./assets/js/shopping-modal.js"></script>
 </body>
+
 </html>
