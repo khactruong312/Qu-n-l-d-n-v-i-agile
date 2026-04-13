@@ -1,4 +1,3 @@
-
 <?php
 
 function insert_variant($name, $price, $quantity, $product_id)
@@ -31,6 +30,6 @@ function deleteall_variant_by_id_product($product_id)
 
 function descrease_quantity_when_order_delivered($variant_id, $descrease)
 {
-    $sql = "UPDATE variants SET quantity = quantity - '$descrease' WHERE variant_id='$variant_id'";
-    pdo_execute($sql);
+    $sql = "UPDATE variants SET quantity = quantity - ? WHERE variant_id=?";
+    pdo_execute($sql, $descrease, $variant_id);
 }

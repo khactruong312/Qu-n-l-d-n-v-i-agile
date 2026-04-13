@@ -20,6 +20,7 @@ function insert_category($name, $description, $image_url, $parent_id)
 
 function update_category($category_id, $name, $description, $image_url, $parent_id = null)
 {
+    $parent_id = empty($parent_id) ? null : $parent_id;
     $sql = "UPDATE categories SET name=?, description=?,image_url=?, parent_id=? WHERE category_id=?";
     return pdo_execute($sql, $name, $description, $image_url, $parent_id, $category_id);
 }

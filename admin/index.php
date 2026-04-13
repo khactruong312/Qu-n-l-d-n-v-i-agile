@@ -371,7 +371,10 @@ include '../model/comments.php';
                                         foreach ($variant_names as $key => $variant_name) {
                                             $variant_price = $variant_prices[$key];
                                             $variant_quantity = $variant_quantitys[$key];
-                                            insert_variant($variant_name, $variant_price, $variant_quantity, $last_id);
+                                            // Only insert if all variant fields are filled
+                                            if (!empty($variant_name) && !empty($variant_price) && !empty($variant_quantity)) {
+                                                insert_variant($variant_name, $variant_price, $variant_quantity, $last_id);
+                                            }
                                         }
                                     }
                                     header('location: index.php?act=list_product');
@@ -438,7 +441,10 @@ include '../model/comments.php';
                                         foreach ($variant_names as $key => $variant_name) {
                                             $variant_price = $variant_prices[$key];
                                             $variant_quantity = $variant_quantitys[$key];
-                                            insert_variant($variant_name, $variant_price, $variant_quantity, $product_id);
+                                            // Only insert if all variant fields are filled
+                                            if (!empty($variant_name) && !empty($variant_price) && !empty($variant_quantity)) {
+                                                insert_variant($variant_name, $variant_price, $variant_quantity, $product_id);
+                                            }
                                         }
                                         header('location: index.php?act=list_product');
                                     }
