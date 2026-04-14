@@ -210,19 +210,35 @@ include '../model/comments.php';
                             include('./categories/list.php');
                             break;
                         case 'add_category':
+                            $list_category = getall_category();
                             if (isset($_POST['add_category'])) {
                                 $error = array();
 
                                 $name = trim($_POST['name']);
+                                $description = isset($_POST['description']) ? $_POST['description'] : '';
+                                $parent_id = isset($_POST['parent_id']) && $_POST['parent_id'] !== '' ? $_POST['parent_id'] : null;
 
                                 if (empty($name)) {
                                     $error['name'] = "Please enter category name!";
                                 }
+                                if (empty($description)) {
+                                    $error['description'] = "Please enter category description!";
+                                }
+                                if (empty($_FILES['image_url']['name'])) {
+                                    $error['image_url'] = "Please select an image!";
+                                } else {
+                                    $targetDir = '../upload/';
+                                    $newFileName = uniqid() . $_FILES['image_url']['name'];
+                                    $targetFile = $targetDir . $newFileName;
+
+                                    if (move_uploaded_file($_FILES['image_url']['tmp_name'], $targetFile)) {
+                                        $image_url = $newFileName;
+                                    } else {
+                                        $error['image_url'] = "Something went wrong uploading the image!";
+                                    }
+                                }
 
                                 if (empty($error)) {
-                                    $description = null;
-                                    $image_url = '';
-                                    $parent_id = null;
                                     insert_category($name, $description, $image_url, $parent_id);
                                     header('location: index.php?act=list_category');
                                 }
