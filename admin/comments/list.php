@@ -45,7 +45,7 @@
                                     <label tabindex="0" class="cursor-pointer m-1">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </label>
-                                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
+                                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 w-40">
                                         <li>
                                             <a class=" font-semibold" href="index.php?act=delete_comment&comment_id=<?php echo $comment_id ?>" onclick="confirmDelete(this.href); return false;"> <i class="bi bi-trash3"></i>Remove </a>
                                         </li>

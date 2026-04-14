@@ -8,47 +8,41 @@
     <div>
         <form action="" method="post" enctype="multipart/form-data">
             <div class="preview-image mt-2">
-                <img class="w-[150px] h-[150px] object-cover rounded-md" src="<?php echo !empty($current_user['image_url']) ? "../" . $image_path . $current_user['image_url'] : '.././assets/img/mock-avatar.svg' ?>" alt="">
+                <img class="w-[150px] h-[150px] object-cover" src="<?php echo !empty($current_user['image_url']) ? "../" . $image_path . $current_user['image_url'] : '.././assets/img/mock-avatar.svg' ?>" alt="">
             </div>
             <div class="flex flex-col space-y-2 w-1/2 my-6">
                 <label class="font-semibold" for="image_url">Upload image</label>
-                <input class="image-upload p-2 bg-neutral-100 rounded-md cursor-pointer" id="image_url" name="image_url" type="file">
+                <input class="image-upload p-2 bg-neutral-100 cursor-pointer" id="image_url" name="image_url" type="file">
                 <?php echo !empty($error['image_url']) ? '<span class="text-red-500 text-sm">' . $error['image_url'] . '</span>' : ""  ?>
             </div>
             <div class="grid md:grid-cols-3 grid-cols-1 gap-4">
                 <div class="flex flex-col space-y-2">
                     <label for="name" class="font-semibold">Username</label>
-                    <input type="text" class="form-input rounded text-slate-900" name="name" id="name" placeholder="Example: nedd" value="<?php echo $current_user['name'] ?>" />
+                    <input type="text" class="form-input text-slate-900" name="name" id="name" placeholder="Example: nedd" value="<?php echo $current_user['name'] ?>" />
                     <?php echo !empty($error['name']) ? '<span class="text-red-500 text-sm">' . $error['name'] . '</span>' : ""  ?>
                 </div>
                 <div class="flex flex-col space-y-2">
                     <label for="email" class="font-semibold">Email</label>
-                    <input type="email" class="form-input rounded text-slate-900" name="email" id="email" value="<?php echo $current_user['email'] ?>" />
+                    <input type="email" class="form-input text-slate-900" name="email" id="email" value="<?php echo $current_user['email'] ?>" />
                     <?php echo !empty($error['email']) ? '<span class="text-red-500 text-sm">' . $error['email'] . '</span>' : ""  ?>
                 </div>
                 <div class="flex flex-col space-y-2">
                     <label for="password" class="font-semibold">Password</label>
-                    <input type="password" class="form-input rounded text-slate-900" name="password" id="password" value="<?php echo $current_user['password'] ?>" />
+                    <input type="password" class="form-input text-slate-900" name="password" id="password" value="<?php echo $current_user['password'] ?>" />
                     <?php echo !empty($error['password']) ? '<span class="text-red-500 text-sm">' . $error['password'] . '</span>' : ""  ?>
                 </div>
             </div>
             <div class="grid grid-cols-3 gap-4 mt-4">
                 <div class="flex flex-col space-y-2">
                     <label for="phone" class="font-semibold">Phone</label>
-                    <input type="tel" class="form-input rounded text-slate-900" name="phone" id="phone" value="<?php echo $current_user['phone'] ?>" />
+                    <input type="tel" class="form-input text-slate-900" name="phone" id="phone" value="<?php echo $current_user['phone'] ?>" />
                 </div>
                 <div class="flex flex-col space-y-2">
                     <label for="name" class="font-semibold">Roles</label>
-                    <select class="px-4 py-[8px] rounded-full" name="role_id">
+                    <select class="px-4 py-[8px]" name="role_id">
                         <option value="">--Select User Account Role--</option>
-
-                        <?php
-                        foreach ($roles as $role) {
-                        ?>
-                            <option class="block px-2 py-3" value="<?php echo $role['role_id'] ?>" <?php echo $current_user["role_id"] === $role['role_id'] ? "selected" : "" ?>><?php echo $role['role_name'] ?></option>
-                        <?php
-                        }
-                        ?>
+                        <option value="2" <?php echo $current_user["role_id"] == 2 ? "selected" : "" ?>>User</option>
+                        <option value="1" <?php echo $current_user["role_id"] == 1 ? "selected" : "" ?>>Admin</option>
                     </select>
                     <?php echo !empty($error['role_id']) ? '<span class="text-red-500 text-sm">' . $error['role_id'] . '</span>' : ""  ?>
                 </div>
@@ -58,19 +52,19 @@
                     <label class="font-semibold">Address</label>
                     <div class="flex flex-col md:items-center md:justify-between md:flex-row gap-4">
                         <div>
-                            <select class="w-full px-4 lg:w-[200px] md:w-[210px] py-2 rounded-full" id="city" aria-label=".form-select-sm" name="city">
+                            <select class="w-full px-4 lg:w-[200px] md:w-[210px] py-2" id="city" aria-label=".form-select-sm" name="city">
                                 <option value="">--Choose City--</option>
                             </select>
                             <?php echo !empty($error['city']) ? '<span class="text-red-500 text-sm">' . $error['city'] . '</span>' : ""  ?>
                         </div>
                         <div>
-                            <select class="w-full px-4 lg:w-[200px] md:w-[210px] py-2 rounded-full" id="district" aria-label=".form-select-sm" name="district">
+                            <select class="w-full px-4 lg:w-[200px] md:w-[210px] py-2" id="district" aria-label=".form-select-sm" name="district">
                                 <option value="">--Choose District--</option>
                             </select>
                             <?php echo !empty($error['district']) ? '<span class="text-red-500 text-sm">' . $error['district'] . '</span>' : ""  ?>
                         </div>
                         <div>
-                            <select class="w-full px-4 lg:w-[200px] md:w-[210px] py-2 rounded-full" id="ward" aria-label=".form-select-sm" name="ward">
+                            <select class="w-full px-4 lg:w-[200px] md:w-[210px] py-2" id="ward" aria-label=".form-select-sm" name="ward">
                                 <option value="">--Choose Ward--</option>
 
                             </select>
@@ -80,7 +74,7 @@
                 </div>
             </div>
 
-            <button class="btn md:btn-md btn-sm capitalize rounded-full bg-slate-700 hover:bg-slate-900 text-white mt-5" type="submit" name="update_user">Update user</button>
+            <button class="btn md:btn-md btn-sm capitalize bg-slate-700 hover:bg-slate-900 text-white mt-5" type="submit" name="update_user">Update user</button>
         </form>
     </div>
 </div>

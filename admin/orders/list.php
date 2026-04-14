@@ -6,11 +6,12 @@
         </div>
     </div>
     <div>
-        <ul class="grid grid-cols-7 items-center justify-between h-[45px] divide-x-2 relative">
+        <ul class="grid grid-cols-8 items-center justify-between h-[45px] divide-x-2 relative">
             <li class="order-tab init-order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="all">All Orders</li>
             <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="Processing">Order Processing</li>
-            <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="In transit">In transit</li>
+            <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="In Transit">In transit</li>
             <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="Delivered">Delivered</li>
+            <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="Returned">Returned</li>
             <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="Cancelled">Cancelled</li>
             <div class="absolute bottom-0 h-1 bg-neutral-600 rounded-full tab-underline transition-all duration-400"></div>
         </ul>

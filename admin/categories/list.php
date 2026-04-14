@@ -18,17 +18,21 @@
                 <!-- head -->
                 <thead class="bg-slate-700 text-white text-base">
                     <tr>
+<<<<<<< HEAD
                         <th>ID</th>
                         <th>Image</th>
+=======
+                        <th>STT</th>
+>>>>>>> 89eefd2ef4a47f8bb08fa836d715773661267d71
                         <th>Category Name</th>
-                        <th>Description</th>
-                        <th>Parent Category</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
+                    $index = 1;
                     foreach ($list_category as $category) {
+<<<<<<< HEAD
                         extract($category);
                         if (!empty($parent_id)) {
                             $parent_category = getone_category($parent_id);
@@ -65,6 +69,19 @@
                                         </li>
                                     </ul>
                                 </div>
+=======
+                    ?>
+                        <tr>
+                            <td><?php echo $index++; ?></td>
+                            <td class="font-semibold"><?php echo $category['name'] ?></td>
+                            <td class="space-x-2">
+                                <a class="btn btn-sm btn-outline" href="index.php?act=update_category&category_id=<?php echo $category['category_id'] ?>">
+                                    <i class="bi bi-pencil"></i> Update
+                                </a>
+                                <a class="btn btn-sm btn-error text-white" href="index.php?act=delete_category&category_id=<?php echo $category['category_id'] ?>" onclick="confirmDelete(this.href); return false;">
+                                    <i class="bi bi-trash3"></i> Remove
+                                </a>
+>>>>>>> 89eefd2ef4a47f8bb08fa836d715773661267d71
                             </td>
                         </tr>
                         <?php

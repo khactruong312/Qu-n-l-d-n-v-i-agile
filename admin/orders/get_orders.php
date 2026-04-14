@@ -7,7 +7,8 @@ include '../../global.php';
 $orderStatus = $_GET['order_status'];
 $sql = "SELECT * FROM orders WHERE 1  ORDER BY order_id DESC";
 if ($orderStatus !== 'all') {
-    $sql = "SELECT * FROM orders WHERE order_status= '$orderStatus' ORDER BY order_id DESC";
+    $safeStatus = strtolower($orderStatus);
+    $sql = "SELECT * FROM orders WHERE LOWER(order_status)= '$safeStatus' ORDER BY order_id DESC";
 }
 $orders = pdo_query($sql);
 
@@ -17,7 +18,7 @@ if (count($orders) > 0) {
         $order_details = getall_order_details_by_orderId($order_id);
         $order_statuss = get_OrderStatus();
 ?>
-        <div class="rounded-lg border p-4">
+        <div class="border p-4">
 
 
             <h3 class="font-semibold text-xl">Order ID: <?php echo $order_id ?></h3>
@@ -32,7 +33,7 @@ if (count($orders) > 0) {
                     <div class="flex items-end space-x-3">
                         <div class="flex flex-col space-y-4 md:w-1/2 w-full">
                             <label for="">Order Status</label>
-                            <select name="order_status" class="w-full px-3 py-2 rounded-md">
+                            <select name="order_status" class="w-full px-3 py-2">
                                 <?php
                                 $currentSelectedKey;
                                 foreach ($order_statuss as $key => $status) {
@@ -59,7 +60,7 @@ if (count($orders) > 0) {
 
 
                         <button type="submit" name="update_order"
-                            class="capitalize btn bg-slate-700 hover:bg-slate-800 text-white rounded-full ">Update</button>
+                            class="capitalize btn bg-slate-700 hover:bg-slate-800 text-white ">Update</button>
                     </div>
                 </form>
             </div>
