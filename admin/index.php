@@ -213,32 +213,16 @@ include '../model/comments.php';
                             if (isset($_POST['add_category'])) {
                                 $error = array();
 
-                                $name = $_POST['name'];
-                                $description = $_POST['description'];
-                                $parent_id = null;
+                                $name = trim($_POST['name']);
 
                                 if (empty($name)) {
-                                    $error['name'] = "Please enter brand name!";
-                                }
-                                if (empty($description)) {
-                                    $error['description'] = "Please enter brand description!";
-                                }
-
-                                if (empty($_FILES['image_url']['name'])) {
-                                    $error['image_url'] = "Image is required";
-                                } else {
-                                    $targetDir = '../upload/';
-                                    $newFileName = uniqid() . $_FILES['image_url']['name'];
-                                    $targetFile = $targetDir . $newFileName;
-
-                                    if (move_uploaded_file($_FILES['image_url']['tmp_name'], $targetFile)) {
-                                        $image_url = $newFileName;
-                                    } else {
-                                        $error['image_url'] = "Some thing went wrong!!";
-                                    }
+                                    $error['name'] = "Please enter category name!";
                                 }
 
                                 if (empty($error)) {
+                                    $description = null;
+                                    $image_url = '';
+                                    $parent_id = null;
                                     insert_category($name, $description, $image_url, $parent_id);
                                     header('location: index.php?act=list_category');
                                 }

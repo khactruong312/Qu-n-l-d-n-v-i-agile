@@ -23,23 +23,6 @@
                     <input type="text" class="form-input text-slate-900" name="name" id="name" placeholder="Example: Gucci" value="<?php echo $current_cate['name'] ?>" />
                     <?php echo !empty($error['name']) ? '<span class="text-red-500 text-sm">' . $error['name'] . '</span>' : ""  ?>
                 </div>
-                <div class="flex flex-col space-y-2">
-                    <label for="parent_id" class="font-semibold">Parent category</label>
-                    <select class="px-4 py-[8px] rounded-md" name="parent_id" id="parent_id">
-                        <option value="null">None (Top-level category)</option>
-                        <?php
-                        if (!empty($list_category)) {
-                            foreach ($list_category as $category) {
-                                if ($category['category_id'] !== $current_cate['category_id']) {
-                        ?>
-                                    <option value="<?php echo $category['category_id'] ?>" <?php echo isset($_POST['parent_id']) && $_POST['parent_id'] == $category['category_id'] ? 'selected' : ($category['category_id'] === $current_cate['parent_id'] ? 'selected' : '') ?>><?php echo htmlspecialchars($category['name']) ?></option>
-                        <?php
-                                }
-                            }
-                        }
-                        ?>
-                    </select>
-                </div>
             </div>
             <div class="flex flex-col space-y-2 mt-6 lg:w-2/3 w-full">
                 <label for="description" class="font-semibold">Description</label>

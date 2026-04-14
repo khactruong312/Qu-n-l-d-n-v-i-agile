@@ -17,42 +17,26 @@
                 <!-- head -->
                 <thead class="bg-slate-700 text-white text-base">
                     <tr>
-                        <th>ID</th>
+                        <th>STT</th>
                         <th>Category Name</th>
-                        <th>Description</th>
-                        <th>Parent Category</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
+                    $index = 1;
                     foreach ($list_category as $category) {
-                        extract($category);
-                        if (!empty($parent_id)) {
-                            $parent_category = getone_category($parent_id);
-                        }
                     ?>
                         <tr>
-                            <th><?php echo $category_id ?></th>
-                            <td class="font-semibold"><?php echo $name ?></td>
-                            <td>
-                                <p class="line-clamp-1"><?php echo $description ?></p>
-                            </td>
-                            <td>
-                                <?php echo isset($parent_category) ? $parent_category['name'] : "NULL" ?></p>
-                            </td>
-                            <td>
-                                <div class="dropdown dropdown-bottom dropdown-end">
-                                    <label tabindex="0" class="cursor-pointer m-1">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </label>
-                                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
-                                        <li><a class=" font-semibold" href="index.php?act=update_category&category_id=<?php echo $category_id ?>"><i class="bi bi-pencil"></i> Update</a></li>
-                                        <li>
-                                            <a class=" font-semibold" href="index.php?act=delete_category&category_id=<?php echo $category_id ?>" onclick="confirmDelete(this.href); return false;"> <i class="bi bi-trash3"></i>Remove </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <td><?php echo $index++; ?></td>
+                            <td class="font-semibold"><?php echo $category['name'] ?></td>
+                            <td class="space-x-2">
+                                <a class="btn btn-sm btn-outline" href="index.php?act=update_category&category_id=<?php echo $category['category_id'] ?>">
+                                    <i class="bi bi-pencil"></i> Update
+                                </a>
+                                <a class="btn btn-sm btn-error text-white" href="index.php?act=delete_category&category_id=<?php echo $category['category_id'] ?>" onclick="confirmDelete(this.href); return false;">
+                                    <i class="bi bi-trash3"></i> Remove
+                                </a>
                             </td>
                         </tr>
                     <?php
