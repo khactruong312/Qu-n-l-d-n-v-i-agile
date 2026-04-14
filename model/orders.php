@@ -60,8 +60,22 @@ function insert_order($username, $email, $phone, $order_note, $createdAt, $total
 /// insert order details
 function insert_order_details($variant_id, $product_id, $product_name, $image, $quantity, $price_per_unit, $order_id)
 {
-    $sql = "INSERT INTO order_details (variant_id, product_id,product_name, image, quantity, price_per_unit, order_id) VALUES(?,?,?,?,?,?,?)";
-    pdo_execute($sql, $variant_id, $product_id, $product_name, $image, $quantity, $price_per_unit, $order_id);
+    $sql = "SELECT * FROM order_details 
+            WHERE order_id = ? AND product_id = ? AND variant_id = ?";
+
+    $exist = pdo_query_one($sql, $order_id, $product_id, $variant_id);
+
+    if ($exist) {
+        $sql = "UPDATE order_details 
+                SET quantity = quantity + ? 
+                WHERE order_id = ? AND product_id = ? AND variant_id = ?";
+        pdo_execute($sql, $quantity, $order_id, $product_id, $variant_id);
+    } else {
+        $sql = "INSERT INTO order_details 
+        (variant_id, product_id, product_name, image, quantity, price_per_unit, order_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)";
+        pdo_execute($sql, $variant_id, $product_id, $product_name, $image, $quantity, $price_per_unit, $order_id);
+    }
 }
 // get all order details of order ID
 function getall_order_details_by_orderId($order_id)
@@ -84,7 +98,7 @@ function update_paymentStatus_when_payment_succeeded($order_id)
 
 function order_item($order, $order_details, $client_side = false, $continue = false)
 {
-    ?>
+?>
     <div class="grid md:grid-cols-2 grid-cols-1 gap-8 mt-4">
         <div class="flex flex-col space-y-6">
             <h4 class="font-medium text-xl">Order information</h4>
@@ -132,9 +146,9 @@ function order_item($order, $order_details, $client_side = false, $continue = fa
                 <?php
                 foreach ($order_details as $orderDetail) {
                     extract($orderDetail);
-                    ?>
+                ?>
                     <div class="flex items-center space-x-3">
-                        <img src="../../upload/<?php echo $image ?>" alt="" class="w-[90px] h-[70px] rounded-md">
+                        <img src="/QU-N-L-D-N-V-I-AGILE/upload/<?php echo $image ?>" class="w-[90px] h-[70px] rounded-md">
                         <div class="flex flex-col space-y-2">
                             <p class="text-sm font-medium">
                                 <?php echo $product_name ?>
@@ -148,7 +162,7 @@ function order_item($order, $order_details, $client_side = false, $continue = fa
                         </div>
                     </div>
                     <hr class="w-full h-1 my-3">
-                    <?php
+                <?php
                 }
                 ?>
             </div>
@@ -175,32 +189,43 @@ function order_item($order, $order_details, $client_side = false, $continue = fa
                 </div>
                 <div class="flex items-center">
                     <h4 class="font-medium text-lg mr-3">Order Status</h4>
-                    <div
-                        class="capitalize badge text-white text-xs px-2 py-1 <?php echo $order['order_status'] === 'Processing' ? 'bg-orange-500' : '' ?> <?php echo $order['order_status'] === 'In Transit' ? 'bg-blue-500' : '' ?> <?php echo $order['order_status'] === 'Delivered' ? 'bg-green-500' : '' ?> <?php echo $order['order_status'] === 'Cancelled' ? 'bg-red-500' : '' ?>">
-                        <?php echo $order['order_status'] ?>
+                    <?php
+                    $orderStatusDisplay = trim($order['order_status']);
+                    $orderStatusLower = strtolower($orderStatusDisplay);
+                    $orderStatusClass = 'bg-gray-500';
+                    if ($orderStatusLower === 'processing') {
+                        $orderStatusClass = 'bg-orange-500';
+                    } elseif ($orderStatusLower === 'in transit') {
+                        $orderStatusClass = 'bg-blue-500';
+                    } elseif ($orderStatusLower === 'delivered') {
+                        $orderStatusClass = 'bg-green-500';
+                    } elseif ($orderStatusLower === 'cancelled' || $orderStatusLower === 'returned' || $orderStatusLower === 'return') {
+                        $orderStatusClass = 'bg-red-500';
+                    }
+                    ?>
+                    <div class="capitalize badge text-white text-xs px-2 py-1 <?php echo $orderStatusClass ?>">
+                        <?php echo $orderStatusDisplay !== '' ? $orderStatusDisplay : 'Unknown' ?>
                     </div>
                 </div>
             </div>
             <?php
             if ($client_side) {
                 if ($order['order_status'] === 'Processing') {
-                    ?>
+            ?>
                     <a href="index.php?act=cancel_order&order_id=<?php echo $order['order_id'] ?>"
                         class="btn bg-red-700 hover:bg-red-800 text-white rounded-full mt-6 w-full"
                         onclick="confirmCancle(this.href); return false;">Cancel Order</a>
-                    <?php
+                <?php
                 }
             }
             if ($continue) {
                 ?>
                 <a href="index.php?act=shop"
                     class="btn bg-slate-700 hover:bg-slate-800 text-white rounded-full mt-6 w-full">Continue Shopping</a>
-                <?php
+            <?php
             }
             ?>
         </div>
     </div>
-    <?php
+<?php
 }
-
-

@@ -210,13 +210,12 @@ include '../model/comments.php';
                             include('./categories/list.php');
                             break;
                         case 'add_category':
-                            $list_category = getall_category();
                             if (isset($_POST['add_category'])) {
                                 $error = array();
 
                                 $name = $_POST['name'];
                                 $description = $_POST['description'];
-                                $parent_id = $_POST['parent_id'] || null;
+                                $parent_id = null;
 
                                 if (empty($name)) {
                                     $error['name'] = "Please enter brand name!";
@@ -257,7 +256,7 @@ include '../model/comments.php';
 
                                     $name = $_POST['name'];
                                     $description = $_POST['description'];
-                                    $parent_id = isset($_POST['parent_id']) ? $_POST['parent_id'] : null;
+                                    $parent_id = isset($_POST['parent_id']) && $_POST['parent_id'] !== 'null' ? $_POST['parent_id'] : null;
 
                                     if (empty($name)) {
                                         $error['name'] = "Please enter category name!";
@@ -267,7 +266,7 @@ include '../model/comments.php';
                                     }
 
                                     if (empty($_FILES['image_url']['name'])) {
-                                        $image_url = $billboard['image_url'];
+                                        $image_url = $current_cate['image_url'];
                                     } else {
                                         $targetDir = '../upload/';
                                         $newFileName = uniqid() . $_FILES['image_url']['name'];
@@ -372,7 +371,10 @@ include '../model/comments.php';
                                         foreach ($variant_names as $key => $variant_name) {
                                             $variant_price = $variant_prices[$key];
                                             $variant_quantity = $variant_quantitys[$key];
-                                            insert_variant($variant_name, $variant_price, $variant_quantity, $last_id);
+                                            // Only insert if all variant fields are filled
+                                            if (!empty($variant_name) && !empty($variant_price) && !empty($variant_quantity)) {
+                                                insert_variant($variant_name, $variant_price, $variant_quantity, $last_id);
+                                            }
                                         }
                                     }
                                     header('location: index.php?act=list_product');
@@ -439,7 +441,10 @@ include '../model/comments.php';
                                         foreach ($variant_names as $key => $variant_name) {
                                             $variant_price = $variant_prices[$key];
                                             $variant_quantity = $variant_quantitys[$key];
-                                            insert_variant($variant_name, $variant_price, $variant_quantity, $product_id);
+                                            // Only insert if all variant fields are filled
+                                            if (!empty($variant_name) && !empty($variant_price) && !empty($variant_quantity)) {
+                                                insert_variant($variant_name, $variant_price, $variant_quantity, $product_id);
+                                            }
                                         }
                                         header('location: index.php?act=list_product');
                                     }
@@ -530,7 +535,6 @@ include '../model/comments.php';
                             if (isset($_GET['user_id'])) {
                                 $user_id = $_GET['user_id'];
                                 $current_user = getone_user($user_id);
-                                $roles = getall_role();
                                 $arrayAddress = array();
                                 if (!empty($current_user['address'])) {
                                     $arrayAddress = explode(',', $current_user['address']);

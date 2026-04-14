@@ -8,31 +8,33 @@
     <div class="py-10">
         <form action="" method="post" enctype="multipart/form-data">
             <div class="preview-image mb-4">
-                <img class="w-[150px] h-[150px] object-cover rounded-md" src="../<?php echo $image_path . $current_cate['image_url']; ?>" alt="">
+                <img class="w-[150px] h-[150px] object-cover" src="../<?php echo $image_path . $current_cate['image_url']; ?>" alt="">
             </div>
             <div class="flex flex-col space-y-2 w-2/3">
                 <div class="flex flex-col space-y-2 w-full md:w-2/3 mb-6">
                     <label class="font-semibold" for="image_url">Upload image</label>
-                    <input class="image-upload p-2 bg-neutral-100 rounded-md cursor-pointer" id="image_url" name="image_url" type="file">
+                    <input class="image-upload p-2 bg-neutral-100 cursor-pointer" id="image_url" name="image_url" type="file">
                     <?php echo !empty($error['image_url']) ? '<span class="text-red-500 text-sm">' . $error['image_url'] . '</span>' : ""  ?>
                 </div>
             </div>
             <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
                 <div class="flex flex-col space-y-2">
                     <label for="name" class="font-semibold">Name</label>
-                    <input type="text" class="form-input rounded text-slate-900" name="name" id="name" placeholder="Example: Gucci" value="<?php echo $current_cate['name'] ?>" />
+                    <input type="text" class="form-input text-slate-900" name="name" id="name" placeholder="Example: Gucci" value="<?php echo $current_cate['name'] ?>" />
                     <?php echo !empty($error['name']) ? '<span class="text-red-500 text-sm">' . $error['name'] . '</span>' : ""  ?>
                 </div>
                 <div class="flex flex-col space-y-2">
-                    <label for="name" class="font-semibold">Parent category</label>
-                    <select class="px-4 py-[8px] rounded-md" name="parent_id">
+                    <label for="parent_id" class="font-semibold">Parent category</label>
+                    <select class="px-4 py-[8px] rounded-md" name="parent_id" id="parent_id">
                         <option value="null">None (Top-level category)</option>
                         <?php
-                        foreach ($list_category as $category) {
-                            if ($category['category_id'] !== $current_cate['category_id']) {
+                        if (!empty($list_category)) {
+                            foreach ($list_category as $category) {
+                                if ($category['category_id'] !== $current_cate['category_id']) {
                         ?>
-                                <option class="block px-2 py-3" value="<?php echo $category['category_id'] ?>" <?php echo $category['category_id'] === $current_cate['parent_id'] ? "selected" : "" ?>><?php echo $category['name'] ?></option>
+                                    <option value="<?php echo $category['category_id'] ?>" <?php echo isset($_POST['parent_id']) && $_POST['parent_id'] == $category['category_id'] ? 'selected' : ($category['category_id'] === $current_cate['parent_id'] ? 'selected' : '') ?>><?php echo htmlspecialchars($category['name']) ?></option>
                         <?php
+                                }
                             }
                         }
                         ?>

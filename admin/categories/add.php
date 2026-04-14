@@ -1,69 +1,73 @@
-<div class="animate__animated animate__zoomIn animate__faster min-h-screen h-full ">
-
+<div class="animate__animated animate__zoomIn animate__faster min-h-screen h-full">
     <div class="flex items-center justify-between border-b border-neutral-300 pb-5 px-2">
-
         <div>
-            <h4 class="font-semibold text-3xl ">Billboards</h4>
-            <p class="text-neutral-500 mt-1">List of the billboard</p>
+            <h4 class="font-semibold text-3xl">Add categories</h4>
+            <p class="text-neutral-500 mt-1">Create a new category for products</p>
         </div>
-
-        <a class="btn md:btn-md btn-sm rounded-full bg-slate-700 hover:bg-slate-900 text-white  " href="index.php?act=add_billboard">
-            <p class="capitalize">Add new billboard</p>
-            <i class="bi bi-plus-circle text-xl"></i>
-        </a>
-
     </div>
+    <div class="py-10">
+        <form action="" method="post" enctype="multipart/form-data">
+            <div class="preview-image mb-4"></div>
+            <div class="flex flex-col space-y-2 w-full md:w-2/3 mb-6">
+                <label class="font-semibold" for="image_url">Upload image</label>
+                <input class="image-upload p-2 bg-neutral-100 rounded-md cursor-pointer" id="image_url" name="image_url"
+                    type="file">
+                <?php echo !empty($error['image_url']) ? '<span class="text-red-500 text-sm">' . $error['image_url'] . '</span>' : "" ?>
+            </div>
+            <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+                <div class="flex flex-col space-y-2">
+                    <label for="name" class="font-semibold">Category name</label>
+                    <input type="text" class="form-input rounded text-slate-900" name="name" id="name"
+                        placeholder="Example: Electronics" />
+                    <?php echo !empty($error['name']) ? '<span class="text-red-500 text-sm">' . $error['name'] . '</span>' : "" ?>
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <label for="parent_id" class="font-semibold">Parent category</label>
+                    <select class="form-select rounded text-slate-900" name="parent_id" id="parent_id">
+                        <option value="">-- No parent --</option>
+                        <?php if (count($list_category) > 0): ?>
+                            <?php foreach ($list_category as $cat): ?>
+                                <option value="<?php echo $cat['category_id']; ?>"><?php echo $cat['name']; ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="flex flex-col space-y-2 w-full mb-6">
+                <label for="description" class="font-semibold">Description</label>
+                <textarea class="form-textarea rounded text-slate-900" name="description" id="description"
+                    placeholder="Enter category description"></textarea>
+                <?php echo !empty($error['description']) ? '<span class="text-red-500 text-sm">' . $error['description'] . '</span>' : "" ?>
+            </div>
+            <button class="btn md:btn-md btn-sm capitalize rounded-full bg-slate-700 hover:bg-slate-900 text-white mt-5"
+                type="submit" name="add_category">Add category</button>
+        </form>
+    </div>
+</div>
 
-    <?php
-    if (count($list_billboard) > 0) {
-    ?>
-        <div class="w-full h-full mt-5 border border-neutral-200">
-            <table class="table lg:table-lg md:table-md sm:table-sm table-xs">
-                <!-- head -->
-                <thead class="bg-slate-700 text-white text-base">
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Sub Title</th>
-                        <th>Image</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($list_billboard as $billboard) {
-                        extract($billboard);
-                    ?>
-                        <tr>
-                            <th><?php echo $billboard_id ?></th>
-                            <td><?php echo $title ?></td>
-                            <td><?php echo $subtitle ?></td>
-                            <td><img class="w-[150px] h-[80px] object-cover border-2 border-neutral-400 rounded-md" src="../<?php echo $image_path  . $image_url ?>" alt="billboard"></td>
-                            <td>
-                                <div class="dropdown dropdown-bottom dropdown-end">
-                                    <label tabindex="0" class="cursor-pointer m-1">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </label>
-                                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
-                                        <li><a class=" font-semibold" href="index.php?act=update_billboard&billboard_id=<?php echo $billboard_id ?>"><i class="bi bi-pencil"></i> Update</a></li>
-                                        <li>
-                                            <a class=" font-semibold" href="index.php?act=delete_billboard&billboard_id=<?php echo $billboard_id ?>" onclick="confirmDelete(this.href); return false;"> <i class="bi bi-trash3"></i>Remove </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    <?php
-    } else {
-    ?>
-        <div class="w-full text-center py-10">No billboard created! Create now!</div>
-    <?php
-    }
-    ?>
+    <div class="py-10">
+        <form action="" method="post" enctype="multipart/form-data" class="space-y-6">
+            <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+                <div class="flex flex-col space-y-2">
+                    <label for="name" class="font-semibold">Name</label>
+                    <input type="text" class="form-input text-slate-900" name="name" id="name" placeholder="Example: Smartphones" value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : '' ?>" />
+                    <?php echo !empty($error['name']) ? '<span class="text-red-500 text-sm">' . $error['name'] . '</span>' : '' ?>
+                </div>
+            </div>
+
+            <div class="flex flex-col space-y-2">
+                <label for="description" class="font-semibold">Description</label>
+                <textarea name="description" id="description" class="textarea textarea-bordered" placeholder="Category description"><?php echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : '' ?></textarea>
+                <?php echo !empty($error['description']) ? '<span class="text-red-500 text-sm">' . $error['description'] . '</span>' : '' ?>
+            </div>
+
+            <div class="flex flex-col space-y-2 w-full md:w-1/2">
+                <label class="font-semibold" for="image_url">Upload image</label>
+                <input class="image-upload p-2 bg-neutral-100 cursor-pointer" id="image_url" name="image_url" type="file">
+                <?php echo !empty($error['image_url']) ? '<span class="text-red-500 text-sm">' . $error['image_url'] . '</span>' : '' ?>
+            </div>
+
+            <button class="btn md:btn-md btn-sm capitalize bg-slate-700 hover:bg-slate-900 text-white" type="submit" name="add_category">Add category</button>
+        </form>
+    </div>
 </div>

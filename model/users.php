@@ -38,14 +38,13 @@ function checklogin_admin($email, $password)
 // finusser
 function getall_user_lk_fk($keyword)
 {
-    $sql = "SELECT * FROM users where  1= 1";
+    $sql = "SELECT * FROM users WHERE role_id != 1";
     if (!empty($keyword)) {
         $sql .= " AND name LIKE '%" . $keyword . "%'";
     }
 
 
     return pdo_query($sql);
-
 }
 
 /// register client side
@@ -70,7 +69,6 @@ function sendMail($email)
     $account = pdo_query_one($sql);
     if ($account != false) {
         sendMailPass($email, $account['name'], $account['password']);
-
     }
 }
 
@@ -106,4 +104,4 @@ function sendMailPass($email, $username, $pass)
     } catch (Exception $e) {
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
-}     
+}
