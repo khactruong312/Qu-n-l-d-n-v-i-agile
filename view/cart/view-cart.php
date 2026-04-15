@@ -59,7 +59,8 @@
                             } elseif ($variant_stock < 5) {
                                 ?>
                                 <p class="text-orange-600 font-semibold"><i class="bi bi-exclamation-triangle"></i> Chỉ còn
-                                    <?php echo $variant_stock ?> sản phẩm</p>
+                                    <?php echo $variant_stock ?> sản phẩm
+                                </p>
                                 <?php
                             } else {
                                 ?>
@@ -121,6 +122,33 @@
             }
         }
     }
+
+    // ✅ On page load, restore from localStorage if session is lost
+    document.addEventListener('DOMContentLoaded', function() {
+        const backupCart = localStorage.getItem('cart_backup');
+        if (backupCart) {
+            try {
+                const cartData = JSON.parse(backupCart);
+                // POST backup data to server to restore session
+                $.ajax({
+                    url: "./restore-cart.php",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ carts: cartData }),
+                    success: function(response) {
+                        console.log('Cart restored from backup');
+                        // Reload page to reflect restored data
+                        setTimeout(() => location.reload(), 500);
+                    },
+                    error: function(error) {
+                        console.error('Failed to restore cart:', error);
+                    }
+                });
+            } catch(e) {
+                console.error('Error parsing backup cart:', e);
+            }
+        }
+    });
 
     const inscreaseQtyBtns = document.querySelectorAll('.inscrease-cart-qty')
     const decreaseQtyBtns = document.querySelectorAll('.descrease-cart-qty')
@@ -198,16 +226,29 @@
     }
 
     function updateCartQuantity(id, quantity) {
+        console.log('📤 Sending update request:', { id, quantity });
         $.ajax({
-            url: "/e-commerce-website-da1/view/cart/update-cart.php",
+            url: "./view/cart/update-cart.php",
             method: "POST",
             data: {
-                id,
-                quantity
+                id: parseInt(id),
+                quantity: parseInt(quantity)
             },
             success: function (response) {
+                console.log('✅ Server response:', response);
                 const data = JSON.parse(response);
-                updateCartUI(data.totalPrice);
+                if (data.success) {
+                    console.log('💾 Saving to localStorage:', data.carts);
+                    // ✅ Save to localStorage as backup
+                    if (data.carts) {
+                        localStorage.setItem('cart_backup', JSON.stringify(data.carts));
+                        console.log('✅ Saved! localStorage.getItem("cart_backup"):', localStorage.getItem('cart_backup'));
+                    }
+                    updateCartUI(data.totalPrice);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('❌ AJAX Error:', {status, error, responseText: xhr.responseText});
             }
         });
     }

@@ -31,7 +31,7 @@ function initModalEventListeners() {
         decreaseQtyBtn.addEventListener('click', () => {
             if (parseInt(cartQtyInput.value) > 1) {
                 let qty = parseInt(cartQtyInput.value) - 1;
-                cartQtyInput.setAttribute('value', qty);
+                cartQtyInput.value = qty;
             } else {
                 alert('quantity must be more than one');
             }

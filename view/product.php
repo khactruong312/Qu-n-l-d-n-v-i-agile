@@ -202,6 +202,38 @@
             });
         });
 
+        // ✅ Thêm handler cho nút +/-
+        const increaseBtn = document.querySelector('.inscrease-cart-qty');
+        const decreaseBtn = document.querySelector('.descrease-cart-qty');
+        const qtyInput = document.getElementById('cart-qty-input');
+
+        if (increaseBtn) {
+            increaseBtn.addEventListener('click', () => {
+                const currentQty = parseInt(qtyInput.value) || 1;
+                const selectedVariantId = document.querySelector('input[name=variant_id]:checked').value;
+                const selectedVariant = allVariants.find(v => v.variant_id == selectedVariantId);
+                const maxQty = selectedVariant ? selectedVariant.quantity : 0;
+
+                if (maxQty <= 0) return;
+
+                const newQty = currentQty + 1;
+                if (newQty > maxQty) {
+                    alert('The quantity purchased is too much so it must remain in stock');
+                } else {
+                    qtyInput.value = newQty;
+                }
+            });
+        }
+
+        if (decreaseBtn) {
+            decreaseBtn.addEventListener('click', () => {
+                const currentQty = parseInt(qtyInput.value) || 1;
+                if (currentQty > 1) {
+                    qtyInput.value = currentQty - 1;
+                }
+            });
+        }
+
         // Validation trước khi submit
         if (addToCartForm) {
             addToCartForm.addEventListener('submit', function (e) {

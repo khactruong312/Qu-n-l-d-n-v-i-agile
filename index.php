@@ -187,10 +187,24 @@ include './model/users.php';
                             break;
                         case 'view-cart':
                             $carts = $_SESSION['carts'];
+                            // ✅ Close session để AJAX có thể write
+                            session_write_close();
                             include('./view/cart/view-cart.php');
                             break;
                         case 'addtocart':
                             if (isset($_POST['add-to-cart'])) {
+                                // ✅ Generate request hash để detect duplicate submission
+                                $request_hash = md5($_POST['product_id'] . $_POST['variant_id'] . $_POST['quantity']);
+                                
+                                // Check nếu request này đã process trong 10 giây gần đây
+                                if (isset($_SESSION['last_add_request']) && 
+                                    $_SESSION['last_add_request']['hash'] === $request_hash && 
+                                    time() - $_SESSION['last_add_request']['time'] < 10) {
+                                    // Duplicate request - redirect tới cart
+                                    header('location: index.php?act=view-cart');
+                                    exit;
+                                }
+                                
                                 $product_id = $_POST['product_id'];
                                 $name = $_POST['name'];
                                 $discount = $_POST['discount'];
@@ -249,7 +263,17 @@ include './model/users.php';
                                         $_SESSION['carts'][] = $dataCart;
                                     }
 
+                                    // ✅ Store request hash để prevent duplicate submission
+                                    $_SESSION['last_add_request'] = [
+                                        'hash' => $request_hash,
+                                        'time' => time()
+                                    ];
+
+                                    // ✅ Close session để lưu dữ liệu trước khi redirect
+                                    session_write_close();
+                                    
                                     header('location: index.php?act=view-cart');
+                                    exit;
                                 }
                             }
                             break;

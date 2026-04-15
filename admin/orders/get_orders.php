@@ -21,7 +21,7 @@ if (count($orders) > 0) {
 
         $order_details = getall_order_details_by_orderId($order_id);
         $order_statuss = get_OrderStatus();
-?>
+        ?>
 
         <div class="border p-4">
 
@@ -95,7 +95,7 @@ if (count($orders) > 0) {
                                     $selected = ($status == $order_status) ? 'selected' : '';
                                     ?>
 
-                                    <option value="<?= $status ?>" <?= $selected ?> <?= $disabled ?>
+                                    <option value="<?= $status ?>" <?= $selected ?>             <?= $disabled ?>
                                         style="<?= $disabled ? 'color:#999;background:#f3f4f6;' : '' ?>">
                                         <?= $status ?>
                                     </option>
@@ -119,7 +119,7 @@ if (count($orders) > 0) {
 
         </div>
 
-    <?php
+        <?php
     }
 } else {
     ?>
@@ -128,6 +128,39 @@ if (count($orders) > 0) {
         <p class="text-sm">No orders found!</p>
     </div>
 
-<?php
+    <?php
 }
 ?>
+
+<script>
+    function loadProductImage(imgElement) {
+        const productId = imgElement.getAttribute('data-product-id');
+        if (!productId) {
+            imgElement.src = '../../upload/default.jpg';
+            return;
+        }
+
+        // Fetch image từ API
+        fetch(`../../model/get_product_image.php?product_id=${productId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.image) {
+                    imgElement.src = `../../upload/${data.image}`;
+                } else {
+                    imgElement.src = '../../upload/default.jpg';
+                }
+            })
+            .catch(() => {
+                imgElement.src = '../../upload/default.jpg';
+            });
+    }
+
+    // Gọi lần đầu khi load
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('img[data-product-id]').forEach(img => {
+            if (img.src.includes('undefined') || !img.src.includes('/upload/')) {
+                loadProductImage(img);
+            }
+        });
+    });
+</script>
