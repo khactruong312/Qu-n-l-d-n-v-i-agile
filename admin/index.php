@@ -616,16 +616,24 @@ include '../model/comments.php';
 
                                 if (isset($_POST['update_order'])) {
                                     $status = $_POST['order_status'];
+
                                     if ($status === 'Delivered') {
                                         update_PaymentStatus($order_id, 'Succeeded');
+
                                         foreach ($order_details as $order_detail) {
                                             extract($order_detail);
                                             descrease_quantity_when_order_delivered($variant_id, $quantity);
                                         }
                                     }
+
                                     if ($status === 'Cancelled') {
                                         update_PaymentStatus($order_id, 'Return');
                                     }
+
+                                    if ($status === 'Returned') {
+                                        update_PaymentStatus($order_id, 'Return');
+                                    }
+
                                     update_OrderStatus($order_id, $status);
                                     header('location: index.php?act=list_order');
                                 }

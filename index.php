@@ -328,6 +328,15 @@ include './model/users.php';
                                 header('location: index.php?act=shop');
                             }
                             break;
+                        case 'request_return':
+                            if (isset($_GET['order_id'])) {
+                                $order_id = $_GET['order_id'];
+
+                                update_OrderStatus($order_id, 'Return Requested');
+
+                                header('location: index.php?act=my_orders');
+                            }
+                            break;
                         case 'shop':
                             $keyword = "";
                             $minPrice = "";
