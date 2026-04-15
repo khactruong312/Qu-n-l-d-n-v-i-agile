@@ -11,14 +11,20 @@ function initModalEventListeners() {
         currentVariantStock
     ) {
         inscreaseQtyBtn.addEventListener('click', () => {
-            const currentVariantStockValue = currentVariantStock.dataset.stock;
-            if (Number(cartQtyInput.value) > Number(currentVariantStockValue)) {
+            const currentVariantStockValue = Number(
+                currentVariantStock.dataset.stock,
+            );
+            // Không cho tăng nếu hàng hết
+            if (currentVariantStockValue <= 0) {
+                return;
+            }
+            const newQuantity = parseInt(cartQtyInput.value) + 1;
+            if (newQuantity > currentVariantStockValue) {
                 alert(
                     'The quantity purchased is too much so it must remain in stock',
                 );
-                cartQtyInput.value = 1;
             } else {
-                cartQtyInput.value = parseInt(cartQtyInput.value) + 1;
+                cartQtyInput.value = newQuantity;
             }
         });
 
@@ -31,11 +37,16 @@ function initModalEventListeners() {
             }
         });
         cartQtyInput.onchange = () => {
-            const currentVariantStockValue = currentVariantStock.dataset.stock;
-            if (Number(cartQtyInput.value) > Number(currentVariantStockValue)) {
+            const currentVariantStockValue = Number(
+                currentVariantStock.dataset.stock,
+            );
+            const inputQuantity = parseInt(cartQtyInput.value) || 1;
+            if (inputQuantity > currentVariantStockValue) {
                 alert(
                     'The quantity purchased is too much so it must remain in stock',
                 );
+                cartQtyInput.value = 1;
+            } else if (inputQuantity < 1) {
                 cartQtyInput.value = 1;
             }
         };
@@ -85,7 +96,15 @@ function openModal(product, variants) {
         <input type="hidden" name="discount" value="${product.discount}">
         <input type="hidden" name="image_url" value="${productImages[0]}">
     `;
-    document.getElementById('add-to-cart-form').prepend(divElm);
+    const form = document.getElementById('add-to-cart-form');
+    // Xóa input hidden cũ nếu có
+    form.querySelectorAll('input[type="hidden"]').forEach((inp) =>
+        inp.remove(),
+    );
+    form.prepend(divElm);
+
+    // ✅ Reset quantity input về 1 mỗi khi mở modal
+    document.getElementById('cart-qty-input').value = '1';
 
     // ✅ Update button state dựa trên variant được chọn
     updateModalButtonState(variants);
@@ -96,7 +115,6 @@ function openModal(product, variants) {
     }, 100);
 
     // ✅ Add form submit validation
-    const form = document.getElementById('add-to-cart-form');
     form.onsubmit = function (e) {
         const selectedVariantId = document.querySelector(
             'input[name=variant_id]:checked',
@@ -136,6 +154,8 @@ function updateModalButtonState(variants) {
     const addBtn = document.querySelector('.add-to-cart-btn');
     const qtyInput = document.getElementById('cart-qty-input');
     const variantStockDiv = document.querySelector('.variant-stock');
+    const increaseBtn = document.querySelector('.inscrease-cart-qty');
+    const decreaseBtn = document.querySelector('.descrease-cart-qty');
 
     if (selectedVariant && selectedVariant.quantity > 0) {
         document.querySelector('.product-quantity-wrapper').innerHTML = `
@@ -146,6 +166,8 @@ function updateModalButtonState(variants) {
         addBtn.disabled = false;
         addBtn.classList.remove('btn-disabled');
         qtyInput.disabled = false;
+        if (increaseBtn) increaseBtn.disabled = false;
+        if (decreaseBtn) decreaseBtn.disabled = false;
     } else {
         document.querySelector('.product-quantity-wrapper').innerHTML = `
             <p class="text-red-700">Hết hàng - Out of Stock <i class="bi bi-emoji-expressionless"></i></p>
@@ -156,6 +178,8 @@ function updateModalButtonState(variants) {
         addBtn.disabled = true;
         addBtn.classList.add('btn-disabled');
         qtyInput.disabled = true;
+        if (increaseBtn) increaseBtn.disabled = true;
+        if (decreaseBtn) decreaseBtn.disabled = true;
     }
 }
 
