@@ -12,6 +12,9 @@
             <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="In Transit">In transit</li>
             <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="Delivered">Delivered</li>
             <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="Returned">Returned</li>
+            <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="Return Requested">
+                Return Requested
+            </li>
             <li class="order-tab cursor-pointer text-center px-3 py-1 md:text-sm text-xs font-medium text-neutral-500" data-status="Cancelled">Cancelled</li>
             <div class="absolute bottom-0 h-1 bg-neutral-600 rounded-full tab-underline transition-all duration-400"></div>
         </ul>

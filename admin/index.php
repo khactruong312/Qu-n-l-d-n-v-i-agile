@@ -609,13 +609,18 @@ include '../model/comments.php';
                             break;
                         case 'update_order':
                             if (isset($_GET['order_id'])) {
+
                                 $order_id = $_GET['order_id'];
                                 $order = getone_order($order_id);
                                 $order_details = getall_order_details_by_orderId($order_id);
-                                $order_statuss = get_OrderStatus();
 
                                 if (isset($_POST['update_order'])) {
+
                                     $status = $_POST['order_status'];
+
+                                    // =========================
+                                    // BUSINESS LOGIC ONLY
+                                    // =========================
 
                                     if ($status === 'Delivered') {
                                         update_PaymentStatus($order_id, 'Succeeded');
@@ -627,15 +632,17 @@ include '../model/comments.php';
                                     }
 
                                     if ($status === 'Cancelled') {
-                                        update_PaymentStatus($order_id, 'Return');
+                                        update_PaymentStatus($order_id, 'Cancelled');
                                     }
 
-                                    if ($status === 'Returned') {
+                                    if ($status === 'Returned' || $status === 'Return Requested') {
                                         update_PaymentStatus($order_id, 'Return');
                                     }
 
                                     update_OrderStatus($order_id, $status);
+
                                     header('location: index.php?act=list_order');
+                                    exit;
                                 }
                             }
                             break;

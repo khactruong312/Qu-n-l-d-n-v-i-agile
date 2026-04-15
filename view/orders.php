@@ -118,14 +118,6 @@ $orders = getall_order_by_userId($user_id);
                             </a>
                         <?php } ?>
 
-                        <?php if (trim(strtolower($order['order_status'])) == 'in transit') { ?>
-                            <a href="index.php?act=confirm_received&order_id=<?php echo $order['order_id'] ?>"
-                                class="text-green-500 text-sm hover:underline"
-                                onclick="return confirm('Bạn xác nhận đã nhận được hàng?');">
-                                Đã nhận hàng
-                            </a>
-                        <?php } ?>
-
                         <?php if (trim(strtolower($order['order_status'])) == 'delivered') { ?>
                             <a href="index.php?act=request_return&order_id=<?php echo $order['order_id'] ?>"
                                 class="text-orange-500 text-sm hover:underline"
