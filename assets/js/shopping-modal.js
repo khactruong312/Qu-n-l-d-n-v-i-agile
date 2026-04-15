@@ -1,38 +1,45 @@
-const inscreaseQtyBtn = document.querySelector('.inscrease-cart-qty');
-const decreaseQtyBtn = document.querySelector('.descrease-cart-qty');
-const cartQtyInput = document.getElementById('cart-qty-input');
-const currentVariantStock = document.querySelector('.variant-stock');
+function initModalEventListeners() {
+    const inscreaseQtyBtn = document.querySelector('.inscrease-cart-qty');
+    const decreaseQtyBtn = document.querySelector('.descrease-cart-qty');
+    const cartQtyInput = document.getElementById('cart-qty-input');
+    const currentVariantStock = document.querySelector('.variant-stock');
 
-if (inscreaseQtyBtn && decreaseQtyBtn && cartQtyInput && currentVariantStock) {
-    inscreaseQtyBtn.addEventListener('click', () => {
-        const currentVariantStockValue = currentVariantStock.dataset.stock;
-        if (Number(cartQtyInput.value) > Number(currentVariantStockValue)) {
-            alert(
-                'The quantity purchased is too much so it must remain in stock',
-            );
-            cartQtyInput.value = 1;
-        } else {
-            cartQtyInput.value = parseInt(cartQtyInput.value) + 1;
-        }
-    });
+    if (
+        inscreaseQtyBtn &&
+        decreaseQtyBtn &&
+        cartQtyInput &&
+        currentVariantStock
+    ) {
+        inscreaseQtyBtn.addEventListener('click', () => {
+            const currentVariantStockValue = currentVariantStock.dataset.stock;
+            if (Number(cartQtyInput.value) > Number(currentVariantStockValue)) {
+                alert(
+                    'The quantity purchased is too much so it must remain in stock',
+                );
+                cartQtyInput.value = 1;
+            } else {
+                cartQtyInput.value = parseInt(cartQtyInput.value) + 1;
+            }
+        });
 
-    decreaseQtyBtn.addEventListener('click', () => {
-        if (parseInt(cartQtyInput.value) > 1) {
-            let qty = parseInt(cartQtyInput.value) - 1;
-            cartQtyInput.setAttribute('value', qty);
-        } else {
-            alert('quantity must be more than one');
-        }
-    });
-    cartQtyInput.onchange = () => {
-        const currentVariantStockValue = currentVariantStock.dataset.stock;
-        if (Number(cartQtyInput.value) > Number(currentVariantStockValue)) {
-            alert(
-                'The quantity purchased is too much so it must remain in stock',
-            );
-            cartQtyInput.value = 1;
-        }
-    };
+        decreaseQtyBtn.addEventListener('click', () => {
+            if (parseInt(cartQtyInput.value) > 1) {
+                let qty = parseInt(cartQtyInput.value) - 1;
+                cartQtyInput.setAttribute('value', qty);
+            } else {
+                alert('quantity must be more than one');
+            }
+        });
+        cartQtyInput.onchange = () => {
+            const currentVariantStockValue = currentVariantStock.dataset.stock;
+            if (Number(cartQtyInput.value) > Number(currentVariantStockValue)) {
+                alert(
+                    'The quantity purchased is too much so it must remain in stock',
+                );
+                cartQtyInput.value = 1;
+            }
+        };
+    }
 }
 
 function openModal(product, variants) {
@@ -47,9 +54,7 @@ function openModal(product, variants) {
         <label for="variant_${
             variant.variant_id
         }" class="flex p-3 w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
-            <input onchange='handlerChangeInput(${JSON.stringify(
-                variants,
-            )})' type="radio" name="variant_id" id="variant_${
+            <input onchange='handleModalVariantChange(${JSON.stringify(variants)})' type="radio" name="variant_id" id="variant_${
                 variant.variant_id
             }" ${index === 0 ? 'checked' : ''} value="${
                 variant.variant_id
@@ -59,21 +64,19 @@ function openModal(product, variants) {
                 <p class="text-sm font-bold mt-4"><span class="text-xs">(-${
                     product.discount
                 }%)$</span>${
-                Number(variant.price) -
-                (Number(variant.price) * Number(product.discount)) / 100
-            }</p>
+                    Number(variant.price) -
+                    (Number(variant.price) * Number(product.discount)) / 100
+                }</p>
             </div>
         </label>`;
         })
         .join('');
 
-    document.getElementById(
-        'modal__product-variant',
-    ).innerHTML = `<div class="grid md:grid-cols-2 grid-cols-1 gap-2 mb-6">${renderVariant}</div>`;
+    document.getElementById('modal__product-variant').innerHTML =
+        `<div class="grid md:grid-cols-2 grid-cols-1 gap-2 mb-6">${renderVariant}</div>`;
 
-    document.getElementById(
-        'modal__product-image',
-    ).src = `./upload/${productImages[0]}`;
+    document.getElementById('modal__product-image').src =
+        `./upload/${productImages[0]}`;
 
     const divElm = document.createElement('div');
     divElm.innerHTML = `
@@ -83,7 +86,83 @@ function openModal(product, variants) {
         <input type="hidden" name="image_url" value="${productImages[0]}">
     `;
     document.getElementById('add-to-cart-form').prepend(divElm);
+
+    // ✅ Update button state dựa trên variant được chọn
+    updateModalButtonState(variants);
+
+    // ✅ Initialize event listeners cho modal elements
+    setTimeout(() => {
+        initModalEventListeners();
+    }, 100);
+
+    // ✅ Add form submit validation
+    const form = document.getElementById('add-to-cart-form');
+    form.onsubmit = function (e) {
+        const selectedVariantId = document.querySelector(
+            'input[name=variant_id]:checked',
+        ).value;
+        const selectedVariant = variants.find(
+            (v) => v.variant_id == selectedVariantId,
+        );
+        const requestedQty = Number(
+            document.getElementById('cart-qty-input').value,
+        );
+
+        if (!selectedVariant || selectedVariant.quantity <= 0) {
+            e.preventDefault();
+            alert('Sản phẩm này đã hết hàng - This product is out of stock!');
+            return false;
+        }
+
+        if (requestedQty > selectedVariant.quantity) {
+            e.preventDefault();
+            alert(
+                'Số lượng vượt quá hàng trong kho - Only ' +
+                    selectedVariant.quantity +
+                    ' items available!',
+            );
+            return false;
+        }
+    };
 }
+
+function updateModalButtonState(variants) {
+    const selectedVariantId = document.querySelector(
+        'input[name=variant_id]:checked',
+    ).value;
+    const selectedVariant = variants.find(
+        (v) => v.variant_id == selectedVariantId,
+    );
+    const addBtn = document.querySelector('.add-to-cart-btn');
+    const qtyInput = document.getElementById('cart-qty-input');
+    const variantStockDiv = document.querySelector('.variant-stock');
+
+    if (selectedVariant && selectedVariant.quantity > 0) {
+        document.querySelector('.product-quantity-wrapper').innerHTML = `
+            <p class="product-quantity text-violet-700 mr-2">${selectedVariant.quantity}</p>
+            <p class="text-violet-700">In Stock <i class="bi bi-check"></i></p>
+        `;
+        variantStockDiv.dataset.stock = selectedVariant.quantity;
+        addBtn.disabled = false;
+        addBtn.classList.remove('btn-disabled');
+        qtyInput.disabled = false;
+    } else {
+        document.querySelector('.product-quantity-wrapper').innerHTML = `
+            <p class="text-red-700">Hết hàng - Out of Stock <i class="bi bi-emoji-expressionless"></i></p>
+        `;
+        variantStockDiv.dataset.stock = selectedVariant
+            ? selectedVariant.quantity
+            : 0;
+        addBtn.disabled = true;
+        addBtn.classList.add('btn-disabled');
+        qtyInput.disabled = true;
+    }
+}
+
+function handleModalVariantChange(variants) {
+    updateModalButtonState(variants);
+}
+
 function handlerChangeInput(variants) {
     const selectedInput = document.querySelector(
         'input[name=variant_id]:checked',
@@ -91,21 +170,20 @@ function handlerChangeInput(variants) {
     const currentVariant = variants.find(
         (variant) => variant.variant_id === selectedInput,
     );
+    const addBtn = document.querySelector('.add-to-cart-btn');
+
     if (Number(currentVariant.quantity) > 0) {
         document.querySelector('.product-quantity-wrapper').innerHTML = `
         <p class="product-quantity text-violet-700 mr-2">${currentVariant.quantity}</p>
             <p class="text-violet-700">In Stock <i class="bi bi-check"></i></p>
         `;
-        document
-            .querySelector('.add-to-cart-btn')
-            .classList.remove('btn-disabled');
+        addBtn.classList.remove('btn-disabled');
+        addBtn.disabled = false;
     } else {
-        document.querySelector(
-            '.product-quantity-wrapper',
-        ).innerHTML = `<p class="text-red-700">Out Stock <i class="bi bi-emoji-expressionless"></i></p>`;
-        document
-            .querySelector('.add-to-cart-btn')
-            .classList.add('btn-disabled');
+        document.querySelector('.product-quantity-wrapper').innerHTML =
+            `<p class="text-red-700">Hết hàng - Out of Stock <i class="bi bi-emoji-expressionless"></i></p>`;
+        addBtn.classList.add('btn-disabled');
+        addBtn.disabled = true;
     }
     document.querySelector('.variant-stock').dataset.stock =
         currentVariant.quantity;

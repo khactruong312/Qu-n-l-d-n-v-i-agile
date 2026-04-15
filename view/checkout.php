@@ -1,5 +1,17 @@
 <div class="container mx-auto max-w-[1440px] my-12 p-4  pt-14 md:p-8">
 
+    <!-- Stock Error Alert -->
+    <?php if (!empty($error['stock'])): ?>
+        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg" role="alert">
+            <h3 class="font-semibold mb-2"><i class="bi bi-exclamation-triangle"></i> Lỗi hàng hóa - Stock Issue</h3>
+            <p><?php echo $error['stock']; ?></p>
+            <p class="text-sm mt-2">Vui lòng quay lại giỏ hàng để cập nhật số lượng - Please go back to your cart to update
+                quantities.</p>
+            <a href="index.php?act=view-cart" class="text-red-600 hover:underline font-semibold">Quay lại giỏ hàng / Back to
+                Cart</a>
+        </div>
+    <?php endif; ?>
+
     <form class="grid grid-cols-5 gap-6 gap-x-8" action="" method="post">
 
         <div class="md:col-span-2 col-span-full">
@@ -10,20 +22,23 @@
 
                 <div class="flex flex-col space-y-2">
                     <label for="name" class="font-semibold text-sm">Name</label>
-                    <input type="text" class="form-input rounded text-slate-900" name="name" id="name" placeholder="Example: nedd" value="<?php echo $_SESSION['user']['name'] ?>" />
-                    <?php echo !empty($error['name']) ? '<span class="text-red-500 text-sm">' . $error['name'] . '</span>' : ""  ?>
+                    <input type="text" class="form-input rounded text-slate-900" name="name" id="name"
+                        placeholder="Example: nedd" value="<?php echo $_SESSION['user']['name'] ?>" />
+                    <?php echo !empty($error['name']) ? '<span class="text-red-500 text-sm">' . $error['name'] . '</span>' : "" ?>
                 </div>
 
                 <div class="flex flex-col space-y-2">
                     <label for="email" class="font-semibold text-sm">Email</label>
-                    <input type="email" class="form-input rounded text-slate-900" name="email" id="email" value="<?php echo $_SESSION['user']['email'] ?>" />
-                    <?php echo !empty($error['email']) ? '<span class="text-red-500 text-sm">' . $error['email'] . '</span>' : ""  ?>
+                    <input type="email" class="form-input rounded text-slate-900" name="email" id="email"
+                        value="<?php echo $_SESSION['user']['email'] ?>" />
+                    <?php echo !empty($error['email']) ? '<span class="text-red-500 text-sm">' . $error['email'] . '</span>' : "" ?>
                 </div>
 
                 <div class="flex flex-col space-y-2">
                     <label for="phone" class="font-semibold text-sm">Phone</label>
-                    <input type="tel" class="form-input rounded text-slate-900" name="phone" id="phone" value="<?php echo $_SESSION['user']['phone'] ?>" />
-                    <?php echo !empty($error['phone']) ? '<span class="text-red-500 text-sm">' . $error['phone'] . '</span>' : ""  ?>
+                    <input type="tel" class="form-input rounded text-slate-900" name="phone" id="phone"
+                        value="<?php echo $_SESSION['user']['phone'] ?>" />
+                    <?php echo !empty($error['phone']) ? '<span class="text-red-500 text-sm">' . $error['phone'] . '</span>' : "" ?>
                 </div>
 
             </div>
@@ -31,7 +46,7 @@
 
                 <label class="font-semibold text-sm">Address</label>
                 <input type="text" class="form-input rounded text-slate-900" name="address" />
-                <?php echo !empty($error['address']) ? '<span class="text-red-500 text-sm">' . $error['address'] . '</span>' : ""  ?>
+                <?php echo !empty($error['address']) ? '<span class="text-red-500 text-sm">' . $error['address'] . '</span>' : "" ?>
 
             </div>
         </div>
@@ -45,16 +60,46 @@
                 $totalPrice = 0;
                 foreach ($carts as $key => $cart) {
                     extract($cart);
-                    $totalPrice += (int)($price) * (int)($quantity);
-                ?>
+                    $totalPrice += (int) ($price) * (int) ($quantity);
+                    // Get current variant stock info
+                    $variant = getone_variant($cart['variant_id']);
+                    $variantStock = $variant ? $variant['quantity'] : 0;
+                    ?>
                     <div class="grid grid-cols-4 items-center gap-x-4 cart-item text-sm md:text-base">
-                        <img class=" col-span-1 h-[90px] rounded-lg object-cover" src="./<?php echo $image_path . $image_url ?>" alt="">
+                        <img class=" col-span-1 h-[90px] rounded-lg object-cover"
+                            src="./<?php echo $image_path . $image_url ?>" alt="">
                         <h3 class=" col-span-1 line-clamp-2"><?php echo $name . " - " . $variant_name ?></h3>
                         <h4 class="col-span-1 text-center text-sm font-semibold">x<?php echo $quantity ?></h4>
                         <h4 class="col-span-1 text-right text-base font-bold">$<?php echo $price ?></h4>
                     </div>
+                    <!-- Stock Status Display in Checkout -->
+                    <div class="text-xs mb-3">
+                        <?php
+                        if ($variantStock <= 0) {
+                            ?>
+                            <p class="text-red-600 font-semibold"><i class="bi bi-exclamation-circle"></i> Hết hàng - Out of
+                                Stock</p>
+                            <?php
+                        } elseif ($variantStock < $quantity) {
+                            ?>
+                            <p class="text-orange-600 font-semibold"><i class="bi bi-exclamation-triangle"></i> Chỉ còn
+                                <?php echo $variantStock ?> sản phẩm (bạn đặt <?php echo $quantity ?>)</p>
+                            <?php
+                        } elseif ($variantStock < 5) {
+                            ?>
+                            <p class="text-orange-600 font-semibold"><i class="bi bi-exclamation-triangle"></i> Chỉ còn
+                                <?php echo $variantStock ?> sản phẩm</p>
+                            <?php
+                        } else {
+                            ?>
+                            <p class="text-green-600 font-semibold"><i class="bi bi-check-circle"></i> Còn hàng
+                                (<?php echo $variantStock ?> sản phẩm)</p>
+                            <?php
+                        }
+                        ?>
+                    </div>
                     <hr class="my-3 w-full h-1">
-                <?php
+                    <?php
                 }
                 ?>
             </div>
@@ -64,22 +109,25 @@
                 <div class="flex flex-col space-y-2 mt-4">
                     <label for="order-note" class="font-semibold text-sm">Note to seller?</label>
 
-                    <textarea name="order-note" id="order-note" cols="3" rows="5" class="rounded-md py-2 px-3" placeholder="Enter something for order"></textarea>
+                    <textarea name="order-note" id="order-note" cols="3" rows="5" class="rounded-md py-2 px-3"
+                        placeholder="Enter something for order"></textarea>
                 </div>
                 <div class="flex flex-col items-center w-full self-end">
                     <div class="grid grid-cols-1 gap-y-3 w-full mb-4">
                         <label for="" class="text-sm font-semibold">Shipping Method</label>
                         <?php
                         foreach ($shippingTypes as $type) {
-                        ?>
+                            ?>
                             <div class="self-start flex items-center justify-between">
                                 <div>
-                                    <input type="radio" value="<?php echo $type['shipping_type_id'] ?>" name="shipping_type" id="shipping_type_<?php echo $type['shipping_type_id'] ?>" <?php echo $type['shipping_type_id'] == 1 ? "checked" : "" ?> />
-                                    <label for="shipping_type_<?php echo $type['shipping_type_id'] ?>" class="cursor-pointer text-sm"><?php echo $type['shipping_type_name'] ?></label>
+                                    <input type="radio" value="<?php echo $type['shipping_type_id'] ?>" name="shipping_type"
+                                        id="shipping_type_<?php echo $type['shipping_type_id'] ?>" <?php echo $type['shipping_type_id'] == 1 ? "checked" : "" ?> />
+                                    <label for="shipping_type_<?php echo $type['shipping_type_id'] ?>"
+                                        class="cursor-pointer text-sm"><?php echo $type['shipping_type_name'] ?></label>
                                 </div>
                                 <p class="font-medium text-base">$<?php echo $type['shipping_type_price'] ?></p>
                             </div>
-                        <?php
+                            <?php
                         }
                         ?>
                     </div>
@@ -87,9 +135,11 @@
 
                     <div class="flex items-center justify-between w-full font-semibold text-lg">
                         <h3>Total: </h3>
-                        <input type="hidden" name="total-price" id="total-price" value="<?php echo $totalPrice + $shippingTypes['0']['shipping_type_price']; ?>">
+                        <input type="hidden" name="total-price" id="total-price"
+                            value="<?php echo $totalPrice + $shippingTypes['0']['shipping_type_price']; ?>">
                         <input type="hidden" name="user_id" value="<?php echo $_SESSION['user']['user_id'] ?>">
-                        <h3 class="total-price">$<?php echo $totalPrice + $shippingTypes['0']['shipping_type_price']; ?></h3>
+                        <h3 class="total-price">$<?php echo $totalPrice + $shippingTypes['0']['shipping_type_price']; ?>
+                        </h3>
                     </div>
 
                     <hr class="my-3 w-full h-1">
@@ -99,12 +149,15 @@
                             <?php
                             foreach ($paymentMethods as $key => $value) {
                                 $value = trim($value, "'");
-                            ?>
-                                <div class="flex space-x-2 rounded-md shadow-sm hover:shadow-lg border py-4 px-2 cursor-pointer">
-                                    <input type="radio" name="payment_method" <?php echo $key === 0 ? 'checked' : '' ?> value="<?php echo $value ?>" id="payment_<?php echo $key ?>">
-                                    <label for="payment_<?php echo $key ?>" class="capitalize text-sm cursor-pointer"><?php echo $value ?></label>
+                                ?>
+                                <div
+                                    class="flex space-x-2 rounded-md shadow-sm hover:shadow-lg border py-4 px-2 cursor-pointer">
+                                    <input type="radio" name="payment_method" <?php echo $key === 0 ? 'checked' : '' ?>
+                                        value="<?php echo $value ?>" id="payment_<?php echo $key ?>">
+                                    <label for="payment_<?php echo $key ?>"
+                                        class="capitalize text-sm cursor-pointer"><?php echo $value ?></label>
                                 </div>
-                            <?php
+                                <?php
                             }
                             ?>
                         </div>
@@ -114,7 +167,8 @@
 
                         <div class="submit-placeorder-button">
 
-                            <button class="btn btn-outline w-full my-2" type="submit" name="place-order">Place order</button>
+                            <button class="btn btn-outline w-full my-2" type="submit" name="place-order">Place
+                                order</button>
 
                         </div>
 
@@ -138,10 +192,10 @@
     const shippingTypeRadios = document.querySelectorAll("input[name='shipping_type']")
 
     shippingTypeRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
+        radio.addEventListener('change', function () {
             const typeId = this.value
 
-            const selectedShippingType = <?php echo json_encode($shippingTypes); ?>.find(function(type) {
+            const selectedShippingType = <?php echo json_encode($shippingTypes); ?>.find(function (type) {
                 return type.shipping_type_id == typeId;
             });
 

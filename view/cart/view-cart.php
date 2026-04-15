@@ -7,9 +7,10 @@
     <?php
     if (count($carts) > 0) {
         $totalPrice = 0;
-    ?>
+        ?>
         <div class="flex flex-col space-y-6">
-            <div class="grid grid-cols-10 items-center cart-item  md:text-base text-lg uppercase text-neutral-600 font-thin ">
+            <div
+                class="grid grid-cols-10 items-center cart-item  md:text-base text-lg uppercase text-neutral-600 font-thin ">
                 <p class="col-span-2">Image</p>
                 <p class="col-span-3">Product Name</p>
                 <p class="lg:col-span-3 col-span-2 text-center">Quantity</p>
@@ -22,28 +23,55 @@
                 foreach ($carts as $key => $cart) {
                     extract($cart);
                     $quantity = !empty($quantity) ? $quantity : 1;
-                    $totalPrice += (int)($price) * (int)($quantity);
-                ?>
+                    $totalPrice += (int) ($price) * (int) ($quantity);
+                    ?>
                     <div class="cart-item">
                         <div class="grid grid-cols-10 items-center gap-x-4 text-sm md:text-base">
-                            <img class=" col-span-2 h-[110px] rounded-lg object-cover" src="./<?php echo $image_path . $image_url ?>" alt="">
+                            <img class=" col-span-2 h-[110px] rounded-lg object-cover"
+                                src="./<?php echo $image_path . $image_url ?>" alt="">
                             <h3 class=" col-span-3 line-clamp-2"><?php echo $name . " - " . $variant_name ?></h3>
                             <div class="lg:col-span-3 col-span-2 flex justify-center items-center space-x-4">
                                 <div class="flex flex-col md:flex-row items-center md:space-x-2 md:space-y-0 space-y-2">
-                                    <span class="descrease-cart-qty btn btn-square btn-sm rounded-full btn-outline cursor-pointer font-bold text-lg">-</span>
-                                    <input type="number" min=1 value="<?php echo $quantity ?>" data-id="<?php echo $key ?>" name="quantity[]" class="form-input w-[60px] m-0 cart-qty-input">
+                                    <span
+                                        class="descrease-cart-qty btn btn-square btn-sm rounded-full btn-outline cursor-pointer font-bold text-lg">-</span>
+                                    <input type="number" min=1 value="<?php echo $quantity ?>" data-id="<?php echo $key ?>"
+                                        name="quantity[]" class="form-input w-[60px] m-0 cart-qty-input">
                                     <input type="text" hidden value="<?php echo $key ?>" name="cart_index[]">
                                     <div class="cart-price-item" data-price="<?php echo $price ?>"></div>
-                                    <span class="inscrease-cart-qty btn btn-square btn-sm rounded-full btn-outline cursor-pointer font-bold text-lg">+</span>
+                                    <span
+                                        class="inscrease-cart-qty btn btn-square btn-sm rounded-full btn-outline cursor-pointer font-bold text-lg">+</span>
                                 </div>
                             </div>
                             <h4 class="col-span-1 text-center lg:text-xl text-base">$<?php echo $price ?></h4>
-                            <a href="index.php?act=delete-cart&cart-id=<?php echo $key ?>" onclick="confirmDelete(this.href); return false;" class="lg:col-span-1 col-span-2 hover:underline text-right">Remove</a>
+                            <a href="index.php?act=delete-cart&cart-id=<?php echo $key ?>"
+                                onclick="confirmDelete(this.href); return false;"
+                                class="lg:col-span-1 col-span-2 hover:underline text-right">Remove</a>
                         </div>
                         <div class="variant-stock" data-stock="<?php echo $variant_stock ?>"></div>
+                        <!-- Stock Status Display -->
+                        <div class="stock-status text-xs mt-2 mb-3">
+                            <?php
+                            if ($variant_stock <= 0) {
+                                ?>
+                                <p class="text-red-600 font-semibold"><i class="bi bi-exclamation-circle"></i> Hết hàng - Out of
+                                    Stock</p>
+                                <?php
+                            } elseif ($variant_stock < 5) {
+                                ?>
+                                <p class="text-orange-600 font-semibold"><i class="bi bi-exclamation-triangle"></i> Chỉ còn
+                                    <?php echo $variant_stock ?> sản phẩm</p>
+                                <?php
+                            } else {
+                                ?>
+                                <p class="text-green-600 font-semibold"><i class="bi bi-check-circle"></i> Còn hàng
+                                    (<?php echo $variant_stock ?> sản phẩm)</p>
+                                <?php
+                            }
+                            ?>
+                        </div>
                         <div class="divider"></div>
                     </div>
-                <?php
+                    <?php
                 }
                 ?>
                 <div class="flex justify-between items-start">
@@ -56,7 +84,7 @@
                             <p class="text-sm text-center">Taxes and shipping caculated at checkout</p>
                             <?php
                             echo isset($_SESSION['user']) ? "<a class='btn btn-outline w-full my-2' href='index.php?act=checkout'>Checkout</a>" : "<a class='btn btn-outline w-full my-2'  href='index.php?act=login'>Login to checkout</a>"
-                            ?>
+                                ?>
                             <div class="flex items-center mt-1">
                                 <i class="bi bi-arrow-left mr-2"></i>
                                 <a href="index.php" class="text-xs">Continue to shopping</a>
@@ -66,16 +94,16 @@
                 </div>
             </div>
         </div>
-</div>
-<?php
+    </div>
+    <?php
     } else {
-?>
+        ?>
     <div class="text-center text-sm">
         <p>Your cart is empty! <a href="index.php">Shopping now!</a></p>
     </div>
-<?php
+    <?php
     }
-?>
+    ?>
 
 </div>
 
@@ -100,18 +128,24 @@
     const cartTotalPrice = document.querySelector('.cart-total-price')
 
     inscreaseQtyBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const parent = getParent(this, '.cart-item')
             const inputQty = parent.querySelector('.cart-qty-input')
             const cartId = inputQty.dataset.id;
             const variantStock = Number(parent.querySelector('.variant-stock').dataset.stock);
+
+            if (variantStock <= 0) {
+                alert('Sản phẩm này đã hết hàng - This product is out of stock');
+                return;
+            }
+
             let qty = parseInt(inputQty.value) + 1;
-            if (Number(inputQty.value) > Number(variantStock)) {
+            if (qty > Number(variantStock)) {
                 alert(
-                    'The quantity purchased is too much so it must remain in stock',
+                    'Số lượng vượt quá hàng trong kho - The quantity purchased is too much, only ' + variantStock + ' items available',
                 );
-                inputQty.value = 1;
-                updateCartQuantity(cartId, 1)
+                inputQty.value = variantStock;
+                updateCartQuantity(cartId, variantStock)
             } else {
                 inputQty.value = qty;
                 updateCartQuantity(cartId, inputQty.value)
@@ -120,7 +154,7 @@
     })
 
     decreaseQtyBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const parent = getParent(this, '.cart-item')
             const inputQty = parent.querySelector('.cart-qty-input')
             const cartId = inputQty.dataset.id;
@@ -141,11 +175,18 @@
             const parent = getParent(input, '.cart-item')
             const cartId = input.dataset.id;
             const variantStock = Number(parent.querySelector('.variant-stock').dataset.stock);
-            if (Number(input.value) >= Number(variantStock)) {
-                alert(
-                    'The quantity purchased is too much so it must remain in stock',
-                );
+
+            if (variantStock <= 0) {
+                alert('Sản phẩm này đã hết hàng - This product is out of stock');
                 input.value = 1;
+                return;
+            }
+
+            if (Number(input.value) > Number(variantStock)) {
+                alert(
+                    'Số lượng vượt quá hàng trong kho - The quantity purchased exceeds stock, only ' + variantStock + ' items available',
+                );
+                input.value = variantStock;
             }
             updateCartQuantity(cartId, input.value)
         };
@@ -164,7 +205,7 @@
                 id,
                 quantity
             },
-            success: function(response) {
+            success: function (response) {
                 const data = JSON.parse(response);
                 updateCartUI(data.totalPrice);
             }
@@ -178,7 +219,7 @@
             data: {
                 id,
             },
-            success: function(response) {
+            success: function (response) {
                 const data = JSON.parse(response);
                 updateCartUI(data.totalPrice);
             }

@@ -201,12 +201,31 @@ include './model/users.php';
                                 $variant = getone_variant($variant_id);
 
                                 if (is_array($variant)) {
+                                    // ✅ KIỂM TRA STOCK TRƯỚC KHI THÊM VÀO GIỎ
+                                    if ($variant['quantity'] <= 0) {
+                                        $_SESSION['error_stock'] = 'Sản phẩm "' . $name . '" đã hết hàng - This product is out of stock!';
+                                        header('location: index.php?act=product&product_id=' . $product_id);
+                                        exit;
+                                    }
+
+                                    if ($quantity > $variant['quantity']) {
+                                        $_SESSION['error_stock'] = 'Số lượng vượt quá hàng trong kho - Only ' . $variant['quantity'] . ' items available!';
+                                        header('location: index.php?act=product&product_id=' . $product_id);
+                                        exit;
+                                    }
 
                                     $found = false;
 
                                     // 👉 kiểm tra đã có trong cart chưa
                                     foreach ($_SESSION['carts'] as &$item) {
                                         if ($item['product_id'] == $product_id && $item['variant_id'] == $variant_id) {
+                                            // ✅ KHI THÊM SỐ LƯỢNG, KIỂM TRA TỔNG KHÔNG VƯỢT STOCK
+                                            $totalQty = $item['quantity'] + $quantity;
+                                            if ($totalQty > $variant['quantity']) {
+                                                $_SESSION['error_stock'] = 'Tổng số lượng vượt quá hàng: ' . $variant['quantity'] . ' items - Total quantity exceeds stock!';
+                                                header('location: index.php?act=product&product_id=' . $product_id);
+                                                exit;
+                                            }
                                             $item['quantity'] += $quantity; // 🔥 cộng số lượng
                                             $found = true;
                                             break;
@@ -280,26 +299,39 @@ include './model/users.php';
                                 }
 
                                 if (empty($error)) {
-                                    // insert order to database
-                                    $conn = insert_order($username, $email, $phone, $order_note, $createdAt, $totalAmount, $address, $shipingType, $payment_method, $payment_status, $order_status, $user_id);
-                                    $order_id = $conn->lastInsertId();
-                                    if ($order_id) {
-                                        foreach ($_SESSION['carts'] as $key => $cart) {
-                                            $variant_id = $cart['variant_id'];
-                                            $quantity = $cart['quantity'];
-                                            $product_id = $cart['product_id'];
-                                            $price_per_unit = $cart['price'];
-                                            $product_name = $cart['name'] . " " . $cart['variant_name'];
-                                            $image = $cart['image_url'];
-                                            insert_order_details($variant_id, $product_id, $product_name, $image, $quantity, $price_per_unit, $order_id);
-                                            descrease_quantity_product_when_order_completed($variant_id, $quantity);
+                                    // Check stock availability before placing order
+                                    $stockError = false;
+                                    foreach ($_SESSION['carts'] as $key => $cart) {
+                                        $variant = getone_variant($cart['variant_id']);
+                                        if (!$variant || $variant['quantity'] < $cart['quantity']) {
+                                            $stockError = true;
+                                            $error['stock'] = "Sản phẩm '" . $cart['name'] . " - " . $cart['variant_name'] . "' không có đủ hàng trong kho. Chỉ còn " . ($variant ? $variant['quantity'] : 0) . " sản phẩm.";
+                                            break;
                                         }
-                                        $_SESSION['carts'] = [];
-                                        if ($payment_method === 'online payment') {
-                                            header("location: index.php?act=online-payment&order_id=$order_id");
-                                        }
-                                        if ($payment_method === 'payment on delivery') {
-                                            header("location: index.php?act=order-completed&order_id=$order_id");
+                                    }
+
+                                    if (!$stockError) {
+                                        // insert order to database
+                                        $conn = insert_order($username, $email, $phone, $order_note, $createdAt, $totalAmount, $address, $shipingType, $payment_method, $payment_status, $order_status, $user_id);
+                                        $order_id = $conn->lastInsertId();
+                                        if ($order_id) {
+                                            foreach ($_SESSION['carts'] as $key => $cart) {
+                                                $variant_id = $cart['variant_id'];
+                                                $quantity = $cart['quantity'];
+                                                $product_id = $cart['product_id'];
+                                                $price_per_unit = $cart['price'];
+                                                $product_name = $cart['name'] . " " . $cart['variant_name'];
+                                                $image = $cart['image_url'];
+                                                insert_order_details($variant_id, $product_id, $product_name, $image, $quantity, $price_per_unit, $order_id);
+                                                descrease_quantity_product_when_order_completed($variant_id, $quantity);
+                                            }
+                                            $_SESSION['carts'] = [];
+                                            if ($payment_method === 'online payment') {
+                                                header("location: index.php?act=online-payment&order_id=$order_id");
+                                            }
+                                            if ($payment_method === 'payment on delivery') {
+                                                header("location: index.php?act=order-completed&order_id=$order_id");
+                                            }
                                         }
                                     }
                                 }
