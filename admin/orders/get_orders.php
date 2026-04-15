@@ -21,105 +21,110 @@ if (count($orders) > 0) {
 
         $order_details = getall_order_details_by_orderId($order_id);
         $order_statuss = get_OrderStatus();
-?>
+        ?>
 
-<div class="border p-4">
+        <div class="border p-4">
 
-    <h3 class="font-semibold text-xl">Order ID: <?php echo $order_id ?></h3>
+            <h3 class="font-semibold text-xl">Order ID: <?php echo $order_id ?></h3>
 
-    <?php echo order_item($order, $order_details) ?>
+            <?php echo order_item($order, $order_details) ?>
 
-    <div>
+            <div>
 
-        <form action="index.php?act=update_order&order_id=<?php echo $order_id ?>" method="post">
+                <form action="index.php?act=update_order&order_id=<?php echo $order_id ?>" method="post">
 
-            <h4 class="font-semibold text-xl mb-6">Update Orders</h4>
+                    <h4 class="font-semibold text-xl mb-6">Update Orders</h4>
 
-            <div class="flex items-end space-x-3">
+                    <div class="flex items-end space-x-3">
 
-                <div class="flex flex-col space-y-4 md:w-1/2 w-full">
+                        <div class="flex flex-col space-y-4 md:w-1/2 w-full">
 
-                    <label>Order Status</label>
-
-                    <?php
-                        $current_status = $order_status;
-
-                        // FLOW ORDER
-                        $flow = [
-                            'Pending' => 1,
-                            'In Transit' => 2,
-                            'Delivered' => 3,
-                            'Return Requested' => 4,
-                            'Returned' => 5,
-                            'Cancelled' => 6
-                        ];
-
-                        $current_index = $flow[$current_status] ?? 0;
-                    ?>
-
-                    <select name="order_status" class="w-full px-3 py-2">
-
-                        <?php foreach ($order_statuss as $status): ?>
+                            <label>Order Status</label>
 
                             <?php
-                                $status = trim($status, "'");
+                            $current_status = $order_status;
 
-                                $disabled = '';
-                                $status_index = $flow[$status] ?? 0;
+                            // FLOW ORDER
+                            $flow = [
+                                'Pending' => 1,
+                                'Processing' => 1,
+                                'In Transit' => 2,
+                                'Delivered' => 3,
+                                'Return Requested' => 4,
+                                'Returned' => 5,
+                                'Cancelled' => 6
+                            ];
 
-                                // ❌ không cho chọn trạng thái đã qua
-                                if ($status_index < $current_index) {
-                                    $disabled = 'disabled';
-                                }
-
-                                // ❌ admin không được chọn Return Requested
-                                if ($status == 'Return Requested') {
-                                    $disabled = 'disabled';
-                                }
-
-                                // ❌ Returned chỉ mở khi user đã request
-                                if ($status == 'Returned' && $current_status != 'Return Requested') {
-                                    $disabled = 'disabled';
-                                }
-
-                                $selected = ($status == $order_status) ? 'selected' : '';
+                            $current_index = $flow[$current_status] ?? 0;
                             ?>
 
-                            <option value="<?= $status ?>"
-                                <?= $selected ?>
-                                <?= $disabled ?>
-                                style="<?= $disabled ? 'color:#999;background:#f3f4f6;' : '' ?>">
-                                <?= $status ?>
-                            </option>
+                            <select name="order_status" class="w-full px-3 py-2">
 
-                        <?php endforeach; ?>
+                                <?php foreach ($order_statuss as $status): ?>
 
-                    </select>
+                                    <?php
+                                    $status = trim($status, "'");
 
-                </div>
+                                    $disabled = '';
+                                    $status_index = $flow[$status] ?? 0;
 
-                <button type="submit" name="update_order"
-                    class="capitalize btn bg-slate-700 hover:bg-slate-800 text-white">
-                    Update
-                </button>
+                                    // ✅ Khi đơn hàng đã giao (Delivered), ko cho sửa trạng thái khác
+                                    if ($current_status === 'Delivered' && $status !== 'Delivered') {
+                                        $disabled = 'disabled';
+                                    }
+                                    // ✅ Cho phép "Cancelled" từ bất kỳ trạng thái nào (trừ Delivered)
+                                    elseif ($status === 'Cancelled' && $current_status !== 'Delivered') {
+                                        $disabled = '';
+                                    }
+                                    // ❌ không cho chọn trạng thái đã qua (trừ Cancelled)
+                                    elseif ($status_index < $current_index && $current_index > 0 && $status !== 'Cancelled') {
+                                        $disabled = 'disabled';
+                                    }
+                                    // ❌ admin không được chọn Return Requested trừ khi đang ở trạng thái Return Requested
+                                    elseif ($status == 'Return Requested' && $current_status != 'Return Requested') {
+                                        $disabled = 'disabled';
+                                    }
+                                    // ❌ Returned chỉ mở khi user đã request
+                                    elseif ($status == 'Returned' && $current_status != 'Return Requested') {
+                                        $disabled = 'disabled';
+                                    }
+
+                                    $selected = ($status == $order_status) ? 'selected' : '';
+                                    ?>
+
+                                    <option value="<?= $status ?>" <?= $selected ?>             <?= $disabled ?>
+                                        style="<?= $disabled ? 'color:#999;background:#f3f4f6;' : '' ?>">
+                                        <?= $status ?>
+                                    </option>
+
+                                <?php endforeach; ?>
+
+                            </select>
+
+                        </div>
+
+                        <button type="submit" name="update_order"
+                            class="capitalize btn bg-slate-700 hover:bg-slate-800 text-white">
+                            Update
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
-        </form>
+        </div>
 
-    </div>
-
-</div>
-
-<?php
+        <?php
     }
 } else {
-?>
+    ?>
 
-<div class="h-full w-full p-20 grid place-items-center">
-    <p class="text-sm">No orders found!</p>
-</div>
+    <div class="h-full w-full p-20 grid place-items-center">
+        <p class="text-sm">No orders found!</p>
+    </div>
 
-<?php
+    <?php
 }
 ?>
