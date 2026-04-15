@@ -21,7 +21,7 @@ if (count($orders) > 0) {
 
         $order_details = getall_order_details_by_orderId($order_id);
         $order_statuss = get_OrderStatus();
-        ?>
+?>
 
         <div class="border p-4">
 
@@ -68,22 +68,25 @@ if (count($orders) > 0) {
                                     $disabled = '';
                                     $status_index = $flow[$status] ?? 0;
 
-                                    // ✅ Khi đơn hàng đã giao (Delivered), ko cho sửa trạng thái khác
                                     if ($current_status === 'Delivered' && $status !== 'Delivered') {
                                         $disabled = 'disabled';
                                     }
-                                    // ✅ Cho phép "Cancelled" từ bất kỳ trạng thái nào (trừ Delivered)
-                                    elseif ($status === 'Cancelled' && $current_status !== 'Delivered') {
-                                        $disabled = '';
-                                    }
-                                    // ❌ không cho chọn trạng thái đã qua (trừ Cancelled)
-                                    elseif ($status_index < $current_index && $current_index > 0 && $status !== 'Cancelled') {
+
+                                    // ❌ Admin KHÔNG được phép hủy đơn
+                                    elseif ($status === 'Cancelled') {
                                         $disabled = 'disabled';
                                     }
-                                    // ❌ admin không được chọn Return Requested trừ khi đang ở trạng thái Return Requested
-                                    elseif ($status == 'Return Requested' && $current_status != 'Return Requested') {
+
+                                    // ❌ không cho chọn trạng thái đã qua
+                                    elseif ($status_index < $current_index && $current_index > 0) {
                                         $disabled = 'disabled';
                                     }
+
+                                    // ❌ admin không được chọn Return Requested
+                                    elseif ($status == 'Return Requested') {
+                                        $disabled = 'disabled';
+                                    }
+
                                     // ❌ Returned chỉ mở khi user đã request
                                     elseif ($status == 'Returned' && $current_status != 'Return Requested') {
                                         $disabled = 'disabled';
@@ -92,7 +95,7 @@ if (count($orders) > 0) {
                                     $selected = ($status == $order_status) ? 'selected' : '';
                                     ?>
 
-                                    <option value="<?= $status ?>" <?= $selected ?>             <?= $disabled ?>
+                                    <option value="<?= $status ?>" <?= $selected ?> <?= $disabled ?>
                                         style="<?= $disabled ? 'color:#999;background:#f3f4f6;' : '' ?>">
                                         <?= $status ?>
                                     </option>
@@ -116,7 +119,7 @@ if (count($orders) > 0) {
 
         </div>
 
-        <?php
+    <?php
     }
 } else {
     ?>
@@ -125,6 +128,6 @@ if (count($orders) > 0) {
         <p class="text-sm">No orders found!</p>
     </div>
 
-    <?php
+<?php
 }
 ?>
