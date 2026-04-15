@@ -1,5 +1,16 @@
 <div class="container mx-auto max-w-[1440px] my-8 p-4 md:p-8">
 
+    <!-- Stock Error Alert -->
+    <?php if (!empty($_SESSION['error_stock'])): ?>
+        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg" role="alert">
+            <h3 class="font-semibold mb-2"><i class="bi bi-exclamation-triangle"></i> Lỗi hàng hóa - Stock Issue</h3>
+            <p>
+                <?php echo $_SESSION['error_stock']; ?>
+            </p>
+        </div>
+        <?php unset($_SESSION['error_stock']); ?>
+    <?php endif; ?>
+
     <div class="grid md:grid-cols-2 grid-cols-1 gap-8">
 
         <div class="w-full">
@@ -7,11 +18,11 @@
                 loop="true" space-between="10" navigation="true">
                 <?php
                 foreach ($image_urls as $image) {
-                ?>
+                    ?>
                     <swiper-slide class="h-full">
                         <img class="w-full h-full object-cover rounded-lg" src="./<?php echo $image_path . $image ?>" />
                     </swiper-slide>
-                <?php
+                    <?php
                 }
                 ?>
             </swiper-container>
@@ -28,11 +39,10 @@
                     $variantDataJson = json_encode($variants);
                     foreach ($variants as $key => $variant) {
                         $discountPrice = floatval($variant['price']) - (floatval($variant['price']) * floatval($discount)) / 100;
-                    ?>
+                        ?>
                         <label for="variant_<?php echo $variant['variant_id'] ?>"
                             class="flex p-3 w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
-                            <input type="radio" <?php echo $key === 0 ? "checked" : "" ?>
-                                onchange="handlerChangeInput(<?php echo htmlspecialchars($variantDataJson) ?>)"
+                            <input type="radio" <?php echo $key === 0 ? "checked" : "" ?> onchange="updateButtonState()"
                                 name="variant_id" value="<?php echo $variant['variant_id'] ?>"
                                 id="variant_<?php echo $variant['variant_id'] ?>"
                                 class=" shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800">
@@ -45,7 +55,7 @@
 
                         </label>
 
-                    <?php
+                        <?php
                     }
                     ?>
                 </div>
@@ -72,29 +82,16 @@
 
             </div>
             <p class="text-sm text-neutral-500 uppercase">Category: <span
-
                     class="font-semibold text-slate-900"><?php echo $category_name ?></span></p>
 
             <p class="text-sm text-neutral-500 uppercase">Brand: <span
-
                     class="font-semibold text-slate-900"><?php echo $brand_name ?></span></p>
 
             <div class="product-quantity-wrapper flex items-center space-x-1 text-sm">
-                <?php
-                if ($variants[0]['quantity'] > 0) {
-                ?>
-                    <p class="product-quantity text-violet-700 mr-2"><?php echo $variants[0]['quantity'] ?></p>
-                    <p class="text-violet-700">In Stock <i class="bi bi-check"></i></p>
-                <?php
-                } else {
-                ?>
-                    <p class="text-red-700">Out Stock <i class="bi bi-emoji-expressionless"></i></p>
-                <?php
-                }
-                ?>
+                <!-- Sẽ được cập nhật bởi JavaScript -->
             </div>
 
-            <div class="variant-stock" data-stock="<?php echo $variants[0]['quantity'] ?>"></div>
+            <div class="variant-stock" data-stock=""></div>
             <input type="hidden" name="product_id" value="<?php echo $product_id ?>">
             <input type="hidden" name="name" value="<?php echo $name ?>">
             <input type="hidden" name="discount" value="<?php echo $discount ?>">
@@ -109,10 +106,10 @@
                     class="descrease-cart-qty btn btn-square btn-sm rounded-full btn-outline cursor-pointer font-bold text-xl">-</span>
                 <input id="cart-qty-input" type="number" min=1 value="1" name="quantity" class="form-input w-[80px] ">
                 <span
-
                     class="inscrease-cart-qty btn btn-square btn-sm rounded-full btn-outline cursor-pointer font-bold text-xl">+</span>
             </div>
-            <button class="add-to-cart-btn btn mt-6 bg-slate-700 hover:bg-slate-800 text-white w-full rounded-full"
+            <button id="submit-add-to-cart-btn"
+                class="add-to-cart-btn btn mt-6 bg-slate-700 hover:bg-slate-800 text-white w-full rounded-full"
                 type="submit" name="add-to-cart">Add to cart</button>
         </form>
 
@@ -144,18 +141,87 @@
 
 
 <script>
-    function handlerChangeInput(variants) {
-        const selectedInput = document.querySelector('input[name=variant_id]:checked').value;
-        const currentVariant = variants.find(variant => variant.variant_id === selectedInput);
-        if (Number(currentVariant.quantity) > 0) {
-            document.querySelector('.product-quantity-wrapper').innerHTML = `
-            <p class="product-quantity text-violet-700 mr-2">${currentVariant.quantity}</p>
+    // Variables toàn cục
+    let addToCartForm;
+    let initialSubmitBtn;
+    let allVariants;
+
+    // Function cập nhật trạng thái button dựa trên variant được chọn
+    function updateButtonState() {
+        const selectedRadio = document.querySelector('input[name=variant_id]:checked');
+        if (!selectedRadio || !initialSubmitBtn || !allVariants) return;
+
+        const selectedVariantId = selectedRadio.value;
+        const selectedVariant = allVariants.find(v => v.variant_id == selectedVariantId);
+
+        const wrapper = document.querySelector('.product-quantity-wrapper');
+        const variantStock = document.querySelector('.variant-stock');
+        const qtyInput = document.getElementById('cart-qty-input');
+
+        if (!wrapper || !variantStock) {
+            return;
+        }
+
+        if (selectedVariant && selectedVariant.quantity > 0) {
+            wrapper.innerHTML = `
+                <p class="product-quantity text-violet-700 mr-2">${selectedVariant.quantity}</p>
                 <p class="text-violet-700">In Stock <i class="bi bi-check"></i></p>
             `;
-            document.querySelector('.add-to-cart-btn').classList.remove('btn-disabled');
+            variantStock.dataset.stock = selectedVariant.quantity;
+            initialSubmitBtn.disabled = false;
+            initialSubmitBtn.classList.remove('btn-disabled');
+            if (qtyInput) qtyInput.disabled = false;
         } else {
-            document.querySelector('.product-quantity-wrapper').innerHTML = `<p class="text-red-700">Out Stock <i class="bi bi-emoji-expressionless"></i></p>`
-            document.querySelector('.add-to-cart-btn').classList.add('btn-disabled');
+            wrapper.innerHTML = `<p class="text-red-700">Hết hàng - Out of Stock <i class="bi bi-emoji-expressionless"></i></p>`;
+            variantStock.dataset.stock = selectedVariant ? selectedVariant.quantity : 0;
+            initialSubmitBtn.disabled = true;
+            initialSubmitBtn.classList.add('btn-disabled');
+            if (qtyInput) qtyInput.disabled = true;
         }
     }
+
+    // Backward compatibility
+    function handlerChangeInput(variants) {
+        updateButtonState();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Khởi tạo biến toàn cục
+        addToCartForm = document.getElementById('add-to-cart-form');
+        initialSubmitBtn = document.getElementById('submit-add-to-cart-btn');
+        allVariants = <?php echo json_encode($variants); ?>;
+
+        // Kiểm tra trạng thái ban đầu
+        updateButtonState();
+
+        // Lắng nghe thay đổi variant
+        const variantRadios = document.querySelectorAll('input[name=variant_id]');
+        variantRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                updateButtonState();
+            });
+        });
+
+        // Validation trước khi submit
+        if (addToCartForm) {
+            addToCartForm.addEventListener('submit', function (e) {
+                const selectedVariantId = document.querySelector('input[name=variant_id]:checked').value;
+                const currentVariant = allVariants.find(variant => variant.variant_id == selectedVariantId);
+                const qtyInput = document.getElementById('cart-qty-input');
+                const requestedQty = qtyInput ? Number(qtyInput.value) : 1;
+
+                if (!currentVariant || currentVariant.quantity <= 0) {
+                    e.preventDefault();
+                    alert('Sản phẩm này đã hết hàng - This product is out of stock!');
+                    return false;
+                }
+
+                if (requestedQty > currentVariant.quantity) {
+                    e.preventDefault();
+                    alert('Số lượng vượt quá hàng trong kho - Only ' + currentVariant.quantity + ' items available!');
+                    return false;
+                }
+            });
+        }
+    });
 </script>
