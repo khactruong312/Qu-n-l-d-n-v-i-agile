@@ -334,7 +334,7 @@ include './model/users.php';
 
                                 update_OrderStatus($order_id, 'Return Requested');
 
-                                header('location: index.php?act=my_orders');
+                                header('location: index.php?act=orders');
                             }
                             break;
                         case 'shop':
