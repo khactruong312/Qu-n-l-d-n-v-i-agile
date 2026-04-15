@@ -104,18 +104,46 @@ $orders = getall_order_by_userId($user_id);
                     </div>
 
                     <!-- ACTION -->
-                    <div class="mt-3 flex gap-3">
+                    <div class="mt-3 flex gap-3 flex-wrap">
                         <a href="index.php?act=order_detail&order_id=<?php echo $order['order_id'] ?>"
                             class="text-blue-500 text-sm hover:underline">
                             Xem chi tiết
                         </a>
 
-                        <?php if ($order['order_status'] == 'Processing') { ?>
+                        <?php if (trim(strtolower($order['order_status'])) == 'processing') { ?>
                             <a href="index.php?act=cancel_order&order_id=<?php echo $order['order_id'] ?>"
                                 class="text-red-500 text-sm hover:underline"
                                 onclick="return confirm('Bạn có chắc muốn hủy đơn này?');">
                                 Hủy đơn
                             </a>
+                        <?php } ?>
+
+                        <?php if (trim(strtolower($order['order_status'])) == 'in transit') { ?>
+                            <a href="index.php?act=confirm_received&order_id=<?php echo $order['order_id'] ?>"
+                                class="text-green-500 text-sm hover:underline"
+                                onclick="return confirm('Bạn xác nhận đã nhận được hàng?');">
+                                Đã nhận hàng
+                            </a>
+                        <?php } ?>
+
+                        <?php if (trim(strtolower($order['order_status'])) == 'delivered') { ?>
+                            <a href="index.php?act=request_return&order_id=<?php echo $order['order_id'] ?>"
+                                class="text-orange-500 text-sm hover:underline"
+                                onclick="return confirm('Bạn có chắc muốn gửi yêu cầu hoàn hàng?');">
+                                Hoàn hàng
+                            </a>
+                        <?php } ?>
+
+                        <?php if (trim(strtolower($order['order_status'])) == 'return requested') { ?>
+                            <span class="text-orange-500 text-sm">
+                                Đang chờ admin xác nhận hoàn hàng
+                            </span>
+                        <?php } ?>
+
+                        <?php if (trim(strtolower($order['order_status'])) == 'returned') { ?>
+                            <span class="text-red-500 text-sm">
+                                Đã hoàn hàng
+                            </span>
                         <?php } ?>
                     </div>
 

@@ -199,7 +199,13 @@ function order_item($order, $order_details, $client_side = false, $continue = fa
                         $orderStatusClass = 'bg-blue-500';
                     } elseif ($orderStatusLower === 'delivered') {
                         $orderStatusClass = 'bg-green-500';
-                    } elseif ($orderStatusLower === 'cancelled' || $orderStatusLower === 'returned' || $orderStatusLower === 'return') {
+                    } elseif ($orderStatusLower === 'return requested') {
+                        $orderStatusClass = 'bg-yellow-500';
+                    } elseif (
+                        $orderStatusLower === 'cancelled' ||
+                        $orderStatusLower === 'returned' ||
+                        $orderStatusLower === 'return'
+                    ) {
                         $orderStatusClass = 'bg-red-500';
                     }
                     ?>

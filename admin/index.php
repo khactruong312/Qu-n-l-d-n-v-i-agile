@@ -210,22 +210,22 @@ include '../model/comments.php';
                             include('./categories/list.php');
                             break;
                         case 'add_category':
+                            $list_category = getall_category();
                             if (isset($_POST['add_category'])) {
                                 $error = array();
 
-                                $name = $_POST['name'];
-                                $description = $_POST['description'];
-                                $parent_id = null;
+                                $name = trim($_POST['name']);
+                                $description = isset($_POST['description']) ? $_POST['description'] : '';
+                                $parent_id = isset($_POST['parent_id']) && $_POST['parent_id'] !== '' ? $_POST['parent_id'] : null;
 
                                 if (empty($name)) {
-                                    $error['name'] = "Please enter brand name!";
+                                    $error['name'] = "Please enter category name!";
                                 }
                                 if (empty($description)) {
-                                    $error['description'] = "Please enter brand description!";
+                                    $error['description'] = "Please enter category description!";
                                 }
-
                                 if (empty($_FILES['image_url']['name'])) {
-                                    $error['image_url'] = "Image is required";
+                                    $error['image_url'] = "Please select an image!";
                                 } else {
                                     $targetDir = '../upload/';
                                     $newFileName = uniqid() . $_FILES['image_url']['name'];
@@ -234,7 +234,7 @@ include '../model/comments.php';
                                     if (move_uploaded_file($_FILES['image_url']['tmp_name'], $targetFile)) {
                                         $image_url = $newFileName;
                                     } else {
-                                        $error['image_url'] = "Some thing went wrong!!";
+                                        $error['image_url'] = "Something went wrong uploading the image!";
                                     }
                                 }
 
@@ -616,16 +616,24 @@ include '../model/comments.php';
 
                                 if (isset($_POST['update_order'])) {
                                     $status = $_POST['order_status'];
+
                                     if ($status === 'Delivered') {
                                         update_PaymentStatus($order_id, 'Succeeded');
+
                                         foreach ($order_details as $order_detail) {
                                             extract($order_detail);
                                             descrease_quantity_when_order_delivered($variant_id, $quantity);
                                         }
                                     }
+
                                     if ($status === 'Cancelled') {
                                         update_PaymentStatus($order_id, 'Return');
                                     }
+
+                                    if ($status === 'Returned') {
+                                        update_PaymentStatus($order_id, 'Return');
+                                    }
+
                                     update_OrderStatus($order_id, $status);
                                     header('location: index.php?act=list_order');
                                 }
