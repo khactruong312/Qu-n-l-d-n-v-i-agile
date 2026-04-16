@@ -402,9 +402,13 @@ include '../model/comments.php';
                                     $category_id = $_POST['category_id'];
 
 
-                                    $variant_names = $_POST['variant_name'];
-                                    $variant_prices = $_POST['variant_price'];
-                                    $variant_quantitys = $_POST['variant_quantity'];
+                                    $variant_names = $_POST['variant_name'] ?? [];
+                                    $variant_prices = $_POST['variant_price'] ?? [];
+                                    $variant_quantitys = $_POST['variant_quantity'] ?? [];
+
+                                    if (!is_array($variant_names)) $variant_names = [];
+                                    if (!is_array($variant_prices)) $variant_prices = [];
+                                    if (!is_array($variant_quantitys)) $variant_quantitys = [];
 
                                     if (empty($name)) {
                                         $error['name'] = "Please enter product name!";
@@ -438,11 +442,17 @@ include '../model/comments.php';
                                             }
                                         }
                                         deleteall_variant_by_id_product($product_id);
+
                                         foreach ($variant_names as $key => $variant_name) {
-                                            $variant_price = $variant_prices[$key];
-                                            $variant_quantity = $variant_quantitys[$key];
-                                            // Only insert if all variant fields are filled
-                                            if (!empty($variant_name) && !empty($variant_price) && !empty($variant_quantity)) {
+
+                                            $variant_price = $variant_prices[$key] ?? null;
+                                            $variant_quantity = $variant_quantitys[$key] ?? null;
+
+                                            if (
+                                                !empty($variant_name) &&
+                                                !empty($variant_price) &&
+                                                !empty($variant_quantity)
+                                            ) {
                                                 insert_variant($variant_name, $variant_price, $variant_quantity, $product_id);
                                             }
                                         }
@@ -533,47 +543,55 @@ include '../model/comments.php';
                             break;
                         case "update_user":
                             if (isset($_GET['user_id'])) {
+
                                 $user_id = $_GET['user_id'];
                                 $current_user = getone_user($user_id);
+
                                 $arrayAddress = array();
                                 if (!empty($current_user['address'])) {
                                     $arrayAddress = explode(',', $current_user['address']);
                                 }
 
                                 if (isset($_POST['update_user'])) {
-                                    $error = array();
-                                    $name = $_POST['name'];
-                                    $email = $_POST['email'];
-                                    $password = $_POST['password'];
-                                    $phone = $_POST['phone'];
-                                    $city = $_POST['city'];
-                                    $district = $_POST['district'];
-                                    $ward = $_POST['ward'];
-                                    $role_id = $_POST['role_id'];
 
+                                    $error = array();
+
+                                    $name = $_POST['name'] ?? '';
+                                    $email = $_POST['email'] ?? '';
+                                    $phone = $_POST['phone'] ?? '';
+                                    $city = $_POST['city'] ?? '';
+                                    $district = $_POST['district'] ?? '';
+                                    $ward = $_POST['ward'] ?? '';
+                                    $role_id = $_POST['role_id'] ?? '';
+
+                                    // ❌ BỎ PASSWORD HOÀN TOÀN
+
+                                    // VALIDATE
                                     if (empty($name)) {
                                         $error['name'] = "Name is required!";
                                     }
+
                                     if (empty($email)) {
                                         $error['email'] = "Email is required!";
                                     }
-                                    if (empty($password)) {
-                                        $error['password'] = "Password is required!";
-                                    }
+
                                     if (empty($city)) {
                                         $error['city'] = "City is required!";
                                     }
+
                                     if (empty($district)) {
                                         $error['district'] = "District is required!";
                                     }
+
                                     if (empty($ward)) {
                                         $error['ward'] = "Ward is required!";
                                     }
+
                                     if (empty($role_id)) {
                                         $error['role_id'] = "Role is required!";
                                     }
 
-
+                                    // IMAGE UPLOAD
                                     if (empty($_FILES['image_url']['name'])) {
                                         $image_url = $current_user['image_url'];
                                     } else {
@@ -584,16 +602,30 @@ include '../model/comments.php';
                                         if (move_uploaded_file($_FILES['image_url']['tmp_name'], $targetFile)) {
                                             $image_url = $newFileName;
                                         } else {
-                                            $error['image_url'] = "Some thing went wrong!!";
+                                            $error['image_url'] = "Something went wrong!!";
                                         }
                                     }
 
+                                    // UPDATE
                                     if (empty($error)) {
+
                                         $address = $city . "," . $district . "," . $ward;
-                                        update_user($current_user["user_id"], $name, $email, $password, $phone, $address, $image_url, $role_id);
+
+                                        update_user(
+                                            $current_user["user_id"],
+                                            $name,
+                                            $email,
+                                            $phone,
+                                            $address,
+                                            $image_url,
+                                            $role_id
+                                        );
+
                                         header('location: index.php?act=list_user');
+                                        exit;
                                     }
                                 }
+
                                 include('./users/update.php');
                             }
                             break;

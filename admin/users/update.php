@@ -31,6 +31,7 @@
                         value="<?php echo $current_user['email'] ?>" />
                     <?php echo !empty($error['email']) ? '<span class="text-red-500 text-sm">' . $error['email'] . '</span>' : "" ?>
                 </div>
+
             </div>
             <div class="grid grid-cols-3 gap-4 mt-4">
                 <div class="flex flex-col space-y-2">
@@ -93,14 +94,14 @@
     const imageUpload = document.querySelector('.image-upload');
     const previewContainer = document.querySelector('.preview-image')
 
-    imageUpload.addEventListener('change', function () {
+    imageUpload.addEventListener('change', function() {
         previewContainer.innerHTML = "";
         for (const file of imageUpload.files) {
             if (file) {
                 const reader = new FileReader();
                 const img = document.createElement("img");
                 img.classList.add("product-upload-img");
-                reader.onload = function (e) {
+                reader.onload = function(e) {
                     img.src = e.target.result;
                 };
 
@@ -115,122 +116,171 @@
 <!-- select address viet nam -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 <script>
-    const citis = document.getElementById("city");
-    const districts = document.getElementById("district");
-    const wards = document.getElementById("ward");
+    let cityId = "<?= $arrayAddress[0] ?? '' ?>";
+    let districtId = "<?= $arrayAddress[1] ?? '' ?>";
+    let wardId = "<?= $arrayAddress[2] ?? '' ?>";
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
 
-    const Parameter = {
-        url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
-        method: "GET",
-        responseType: "application/json",
-    };
-    const promise = axios(Parameter);
-    promise.then(function (result) {
-        renderCity(result.data);
-    });
-    <?php
-    if (count($arrayAddress) > 0) {
-        ?>
-        let cityId = <?php echo $arrayAddress[0] ?>;
-        cityId = cityId.toString();
-        if (cityId.length < 2) {
-            cityId = '0' + cityId;
+        // =========================
+        // IMAGE PREVIEW
+        // =========================
+        const imageUpload = document.querySelector('.image-upload');
+        const previewContainer = document.querySelector('.preview-image');
+
+        if (imageUpload && previewContainer) {
+            imageUpload.addEventListener('change', function() {
+
+                previewContainer.innerHTML = "";
+
+                for (const file of this.files) {
+                    const reader = new FileReader();
+                    const img = document.createElement("img");
+
+                    img.className = "w-[150px] h-[150px] object-cover rounded";
+
+                    reader.onload = function(e) {
+                        img.src = e.target.result;
+                    };
+
+                    reader.readAsDataURL(file);
+                    previewContainer.appendChild(img);
+                }
+            });
         }
 
-        let districtId = <?php echo $arrayAddress[1] ?>;
-        districtId = districtId.toString();
+        // =========================
+        // ADDRESS VIETNAM API
+        // =========================
+        const citis = document.getElementById("city");
+        const districts = document.getElementById("district");
+        const wards = document.getElementById("ward");
 
-        if (districtId.length < 3) {
-            districtId = '0' + districtId;
-        }
+        if (!citis || !districts || !wards) return;
 
-        let wardId = <?php echo $arrayAddress[2] ?>;
-        wardId = wardId.toString();
-
-        if (wardId.length < 5) {
-            wardId = '0' + wardId;
-        }
-
-        console.log(cityId)
-        console.log(districtId)
-        console.log(wardId)
+        axios.get("https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json")
+            .then(function(response) {
+                const data = response.data;
+                renderCity(data);
+            });
 
         function renderCity(data) {
-            for (const x of data) {
-                citis.options[citis.options.length] = new Option(x.Name, x.Id, x.Id === cityId, x.Id === cityId)
-            }
 
-            if (districtId && cityId) {
-                const result = data.filter(n => n.Id === cityId);
-                for (const k of result[0].Districts) {
-                    district.options[district.options.length] = new Option(k.Name, k.Id, k.Id === districtId, k.Id === districtId);
+            // CITY
+            data.forEach(city => {
+                citis.add(new Option(
+                    city.Name,
+                    city.Id,
+                    city.Id === cityId,
+                    city.Id === cityId
+                ));
+            });
+
+            // LOAD DISTRICT nếu có cityId
+            if (cityId) {
+                const city = data.find(c => c.Id === cityId);
+
+                if (city) {
+                    city.Districts.forEach(d => {
+                        districts.add(new Option(
+                            d.Name,
+                            d.Id,
+                            d.Id === districtId,
+                            d.Id === districtId
+                        ));
+                    });
                 }
             }
-            if (wardId && districtId && cityId) {
-                const dataCity = data.filter((n) => n.Id === cityId);
-                console.log(dataCity)
-                const dataWards = dataCity[0].Districts.filter(n => n.Id === districtId)[0].Wards;
-                console.log(dataWards)
-                for (const w of dataWards) {
-                    wards.options[wards.options.length] = new Option(w.Name, w.Id, w.Id === wardId, w.Id === wardId);
+
+            // LOAD WARD nếu có districtId
+            if (cityId && districtId) {
+                const city = data.find(c => c.Id === cityId);
+                if (!city) return;
+
+                const district = city.Districts.find(d => d.Id === districtId);
+                if (district) {
+                    district.Wards.forEach(w => {
+                        wards.add(new Option(
+                            w.Name,
+                            w.Id,
+                            w.Id === wardId,
+                            w.Id === wardId
+                        ));
+                    });
                 }
             }
 
-            citis.onchange = function () {
-                district.length = 1;
-                ward.length = 1;
-                if (this.value != "") {
-                    const result = data.filter(n => n.Id === this.value);
+            // CHANGE CITY
+            citis.onchange = function() {
+                districts.length = 1;
+                wards.length = 1;
 
-                    for (const k of result[0].Districts) {
-                        district.options[district.options.length] = new Option(k.Name, k.Id, k.Id === districtId, k.Id === districtId);
-                    }
-                }
+                const city = data.find(c => c.Id === this.value);
+                if (!city) return;
+
+                city.Districts.forEach(d => {
+                    districts.add(new Option(d.Name, d.Id));
+                });
             };
-            district.onchange = function () {
-                ward.length = 1;
-                const dataCity = data.filter((n) => n.Id === citis.value);
-                if (this.value != "") {
-                    const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
 
-                    for (const w of dataWards) {
-                        wards.options[wards.options.length] = new Option(w.Name, w.Id, w.Id === wardId, w.Id === wardId);
-                    }
-                }
+            // CHANGE DISTRICT
+            districts.onchange = function() {
+                wards.length = 1;
+
+                const city = data.find(c => c.Id === citis.value);
+                if (!city) return;
+
+                const district = city.Districts.find(d => d.Id === this.value);
+                if (!district) return;
+
+                district.Wards.forEach(w => {
+                    wards.add(new Option(w.Name, w.Id));
+                });
             };
         }
-        <?php
-    } else {
-        ?>
 
-        function renderCity(data) {
-            for (const x of data) {
-                citis.options[citis.options.length] = new Option(x.Name, x.Id);
-            }
-            citis.onchange = function () {
-                district.length = 1;
-                ward.length = 1;
-                if (this.value != "") {
-                    const result = data.filter(n => n.Id === this.value);
+        // =========================
+        // LOAD CITY
+        // =========================
+        data.forEach(city => {
+            citis.add(new Option(city.Name, city.Id));
+        });
 
-                    for (const k of result[0].Districts) {
-                        district.options[district.options.length] = new Option(k.Name, k.Id);
-                    }
-                }
-            };
-            district.onchange = function () {
-                ward.length = 1;
-                const dataCity = data.filter((n) => n.Id === citis.value);
-                if (this.value != "") {
-                    const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+        // =========================
+        // CHANGE CITY -> LOAD DISTRICT
+        // =========================
+        citis.onchange = function() {
 
-                    for (const w of dataWards) {
-                        wards.options[wards.options.length] = new Option(w.Name, w.Id);
-                    }
-                }
-            };
-        }
-        <?php
+            districts.length = 1;
+            wards.length = 1;
+
+            const city = data.find(c => c.Id === this.value);
+            if (!city) return;
+
+            city.Districts.forEach(d => {
+                districts.add(new Option(d.Name, d.Id));
+            });
+        };
+
+        // =========================
+        // CHANGE DISTRICT -> LOAD WARD
+        // =========================
+        districts.onchange = function() {
+
+            wards.length = 1;
+
+            const city = data.find(c => c.Id === citis.value);
+            if (!city) return;
+
+            const district = city.Districts.find(d => d.Id === this.value);
+            if (!district || !district.Wards) return;
+
+            district.Wards.forEach(w => {
+                wards.add(new Option(w.Name, w.Id));
+            });
+        };
     }
-    ?>
+
+    );
 </script>

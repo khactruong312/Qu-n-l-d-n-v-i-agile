@@ -17,10 +17,10 @@ function insert_user($name, $email, $password, $phone = "", $address = "", $imag
     pdo_execute($sql, $name, $email, $password, $phone, $address, $image_url, $role_id);
 }
 
-function update_user($user_id, $name, $email, $password, $phone, $address, $image_url, $role_id)
+function update_user($user_id, $name, $email, $phone, $address, $image_url, $role_id)
 {
-    $sql = "UPDATE users SET name=?, email=?, password=?, phone=?, address=?, image_url=?, role_id=? WHERE user_id=?";
-    pdo_execute($sql, $name, $email, $password, $phone, $address, $image_url, $role_id, $user_id);
+    $sql = "UPDATE users SET name=?, email=?,  phone=?, address=?, image_url=?, role_id=? WHERE user_id=?";
+    pdo_execute($sql, $name, $email, $phone, $address, $image_url, $role_id, $user_id);
 }
 
 function delete_user($user_id)

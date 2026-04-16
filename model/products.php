@@ -2,18 +2,29 @@
 
 function getall_product($keyword, $category_id, $brand_id)
 {
-    $sql = "SELECT *  FROM products WHERE 1";
+    $sql = "SELECT * FROM products WHERE 1=1";
+    $params = [];
 
     if (!empty($keyword)) {
-        $sql .= ' and name like "%' . $keyword . '%"';
+        $sql .= " AND name LIKE ?";
+        $params[] = "%" . $keyword . "%";
+
+        // ưu tiên đúng tên
+        $sql .= " ORDER BY (name = ?) DESC";
+        $params[] = $keyword;
     }
+
     if (!empty($category_id)) {
-        $sql .= " and category_id = '" . $category_id . "'";
+        $sql .= " AND category_id = ?";
+        $params[] = $category_id;
     }
+
     if (!empty($brand_id)) {
-        $sql .= " and brand_id = '" . $brand_id . "'";
+        $sql .= " AND brand_id = ?";
+        $params[] = $brand_id;
     }
-    return pdo_query($sql);
+
+    return pdo_query($sql, ...$params);
 }
 
 function getone_product($product_id)
