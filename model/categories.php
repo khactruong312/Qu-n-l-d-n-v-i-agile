@@ -12,25 +12,20 @@ function getone_category($category_id)
     return pdo_query_one($sql);
 }
 
-function insert_category($name, $description, $image_url, $parent_id)
+function insert_category($name, $description, $image_url)
 {
     $image_url = $image_url ?? '';
-    $sql = "INSERT INTO categories (name, description, image_url, parent_id) VALUES (?, ?, ?, ?)";
-    pdo_execute($sql, $name, $description, $image_url, $parent_id);
+    $sql = "INSERT INTO categories (name, description, image_url) VALUES (?, ?, ?)";
+    pdo_execute($sql, $name, $description, $image_url);
 }
 
-function update_category($category_id, $name, $description, $image_url, $parent_id = null)
+function update_category($category_id, $name, $description, $image_url)
 {
     $parent_id = empty($parent_id) ? null : $parent_id;
-    $sql = "UPDATE categories SET name=?, description=?,image_url=?, parent_id=? WHERE category_id=?";
-    return pdo_execute($sql, $name, $description, $image_url, $parent_id, $category_id);
+    $sql = "UPDATE categories SET name=?, description=?,image_url=? WHERE category_id=?";
+    return pdo_execute($sql, $name, $description, $image_url, $category_id);
 }
 
-function update_when_delete_parrent($parent_id)
-{
-    $sql = "UPDATE categories SET parent_id=NULL WHERE parent_id=$parent_id";
-    pdo_execute($sql);
-}
 
 function delete_category($category_id)
 {

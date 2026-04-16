@@ -216,7 +216,6 @@ include '../model/comments.php';
 
                                 $name = trim($_POST['name']);
                                 $description = isset($_POST['description']) ? $_POST['description'] : '';
-                                $parent_id = isset($_POST['parent_id']) && $_POST['parent_id'] !== '' ? $_POST['parent_id'] : null;
 
                                 if (empty($name)) {
                                     $error['name'] = "Please enter category name!";
@@ -239,7 +238,7 @@ include '../model/comments.php';
                                 }
 
                                 if (empty($error)) {
-                                    insert_category($name, $description, $image_url, $parent_id);
+                                    insert_category($name, $description, $image_url);
                                     header('location: index.php?act=list_category');
                                 }
                             }
@@ -256,7 +255,6 @@ include '../model/comments.php';
 
                                     $name = $_POST['name'];
                                     $description = $_POST['description'];
-                                    $parent_id = isset($_POST['parent_id']) && $_POST['parent_id'] !== 'null' ? $_POST['parent_id'] : null;
 
                                     if (empty($name)) {
                                         $error['name'] = "Please enter category name!";
@@ -279,7 +277,7 @@ include '../model/comments.php';
                                         }
                                     }
                                     if (empty($error)) {
-                                        update_category($category_id, $name, $description, $image_url, $parent_id);
+                                        update_category($category_id, $name, $description, $image_url);
                                         header('location: index.php?act=list_category');
                                     }
                                 }
@@ -289,7 +287,6 @@ include '../model/comments.php';
                         case 'delete_category':
                             if ($_GET['category_id']) {
                                 $category_id = $_GET['category_id'];
-                                update_when_delete_parrent($category_id);
                                 delete_category($_GET['category_id']);
                                 header("Location:index.php?act=list_category");
                             }

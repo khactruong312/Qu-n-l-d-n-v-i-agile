@@ -24,17 +24,6 @@
                         value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : '' ?>" />
                     <?php echo !empty($error['name']) ? '<span class="text-red-500 text-sm">' . $error['name'] . '</span>' : '' ?>
                 </div>
-                <div class="flex flex-col space-y-2">
-                    <label for="parent_id" class="font-semibold">Parent category</label>
-                    <select class="form-select rounded text-slate-900" name="parent_id" id="parent_id">
-                        <option value="">-- No parent --</option>
-                        <?php if (count($list_category) > 0): ?>
-                            <?php foreach ($list_category as $cat): ?>
-                                <option value="<?php echo $cat['category_id']; ?>"><?php echo $cat['name']; ?></option>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
-                </div>
             </div>
             <div class="flex flex-col space-y-2 w-full">
                 <label for="description" class="font-semibold">Description</label>

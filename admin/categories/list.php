@@ -22,7 +22,6 @@
                         <th>Image</th>
                         <th>Category Name</th>
                         <th>Description</th>
-                        <th>Parent Category</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -43,9 +42,6 @@
                             <td class="font-semibold"><?php echo $name ?></td>
                             <td>
                                 <p class="line-clamp-1"><?php echo $description ?></p>
-                            </td>
-                            <td>
-                                <?php echo isset($parent_category) ? $parent_category['name'] : "NULL" ?></p>
                             </td>
                             <td>
                                 <div class="dropdown dropdown-bottom dropdown-end">
