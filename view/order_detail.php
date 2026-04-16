@@ -40,6 +40,10 @@ $order_details = getall_order_details_by_orderId($order_id);
             <div><span class="font-medium">SĐT:</span> <?php echo $order['order_tel'] ?></div>
             <div><span class="font-medium">Địa chỉ:</span> <?php echo $order['shipping_address'] ?></div>
             <div><span class="font-medium">Ngày đặt:</span> <?php echo $order['created_at'] ?></div>
+            <div>
+                <span class="font-medium">Ghi chú:</span>
+                <?php echo !empty($order['order_note']) ? $order['order_note'] : 'Không có ghi chú' ?>
+            </div>
 
         </div>
 

@@ -98,7 +98,7 @@ function update_paymentStatus_when_payment_succeeded($order_id)
 
 function order_item($order, $order_details, $client_side = false, $continue = false)
 {
-    ?>
+?>
     <div class="grid md:grid-cols-2 grid-cols-1 gap-8 mt-4">
         <div class="flex flex-col space-y-6">
             <h4 class="font-medium text-xl">Order information</h4>
@@ -133,6 +133,12 @@ function order_item($order, $order_details, $client_side = false, $continue = fa
                 </p>
             </div>
             <div class="grid grid-cols-5">
+                <p class="mb-0 font-medium col-span-2 text-sm text-neutral-600">Order Note</p>
+                <p class="mb-0 font-medium col-span-3 text-base w-full">
+                    <?php echo !empty($order['order_note']) ? $order['order_note'] : 'No note' ?>
+                </p>
+            </div>
+            <div class="grid grid-cols-5">
                 <p class=" mb-0 font-medium col-span-2 text-sm text-neutral-600">Shipping address</p>
                 <p class=" mb-0 font-medium col-span-3 text-base w-full">
                     <?php echo $order['shipping_address'] ?>
@@ -146,7 +152,7 @@ function order_item($order, $order_details, $client_side = false, $continue = fa
                 <?php
                 foreach ($order_details as $orderDetail) {
                     extract($orderDetail);
-                    ?>
+                ?>
                     <div class="flex items-center space-x-3">
                         <img src="/QLDA-MAIN/QLDA-MAIN/QLDA-MAIN/upload/<?php echo $image ?>" alt="<?php echo $product_name ?>"
                             class="w-[90px] h-[70px] rounded-md object-cover" data-product-id="<?php echo $product_id ?>"
@@ -164,7 +170,7 @@ function order_item($order, $order_details, $client_side = false, $continue = fa
                         </div>
                     </div>
                     <hr class="w-full h-1 my-3">
-                    <?php
+                <?php
                 }
                 ?>
             </div>
@@ -219,21 +225,21 @@ function order_item($order, $order_details, $client_side = false, $continue = fa
             <?php
             if ($client_side) {
                 if ($order['order_status'] === 'Processing') {
-                    ?>
+            ?>
                     <a href="index.php?act=cancel_order&order_id=<?php echo $order['order_id'] ?>"
                         class="btn bg-red-700 hover:bg-red-800 text-white rounded-full mt-6 w-full"
                         onclick="confirmCancle(this.href); return false;">Cancel Order</a>
-                    <?php
+                <?php
                 }
             }
             if ($continue) {
                 ?>
                 <a href="index.php?act=shop"
                     class="btn bg-slate-700 hover:bg-slate-800 text-white rounded-full mt-6 w-full">Continue Shopping</a>
-                <?php
+            <?php
             }
             ?>
         </div>
     </div>
-    <?php
+<?php
 }
