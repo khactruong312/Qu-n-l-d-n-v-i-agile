@@ -105,10 +105,6 @@
         </div>
         <!-- Latest product -->
         <div class="mt-8">
-            <div class="mb-6">
-                <h2 class="font-semibold text-2xl font-monospace ">New Arrival</h2>
-                <p class="text-slate-500">New Arrival product of store</p>
-            </div>
             <swiper-container space-between="30" slides-per-view="4" class="mt-6 swipper-product-latest">
                 <?php
                 foreach ($latest_products as $product) {

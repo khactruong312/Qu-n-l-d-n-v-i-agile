@@ -28,9 +28,9 @@ $old = [
                 <label class="font-medium text-sm">Upload Images</label>
 
                 <input type="file"
-                       name="images[]"
-                       multiple
-                       class="image-upload border border-slate-700 rounded-lg p-3 cursor-pointer">
+                    name="images[]"
+                    multiple
+                    class="image-upload border border-slate-700 rounded-lg p-3 cursor-pointer">
 
                 <?php if (!empty($error['images'])): ?>
                     <span class="text-red-500 text-xs"><?= $error['images'] ?></span>
@@ -44,9 +44,9 @@ $old = [
                 <div class="flex flex-col space-y-2">
                     <label>Name</label>
                     <input type="text"
-                           name="name"
-                           class="form-input rounded text-slate-900"
-                           value="<?= htmlspecialchars($old['name']) ?>">
+                        name="name"
+                        class="form-input rounded text-slate-900"
+                        value="<?= htmlspecialchars($old['name']) ?>">
 
                     <?php if (!empty($error['name'])): ?>
                         <span class="text-red-500 text-xs"><?= $error['name'] ?></span>
@@ -57,11 +57,11 @@ $old = [
                 <div class="flex flex-col space-y-2">
                     <label>Discount (%)</label>
                     <input type="number"
-                           name="discount"
-                           min="0"
-                           step="0.01"
-                           class="form-input rounded text-slate-900"
-                           value="<?= htmlspecialchars($old['discount']) ?>">
+                        name="discount"
+                        min="0"
+                        step="0.01"
+                        class="form-input rounded text-slate-900"
+                        value="<?= htmlspecialchars($old['discount']) ?>">
 
                     <?php if (!empty($error['discount'])): ?>
                         <span class="text-red-500 text-xs"><?= $error['discount'] ?></span>
@@ -128,9 +128,9 @@ $old = [
             <!-- FEATURED -->
             <div class="flex items-center gap-x-3 mt-5">
                 <input type="checkbox"
-                       name="is_featured"
-                       value="1"
-                       <?= !empty($old['is_featured']) ? 'checked' : '' ?>>
+                    name="is_featured"
+                    value="1"
+                    <?= !empty($old['is_featured']) ? 'checked' : '' ?>>
 
                 <label class="font-semibold">This product is featured?</label>
 
@@ -144,31 +144,66 @@ $old = [
             <!-- VARIANTS -->
             <h5 class="font-semibold text-xl mb-6">Add product variant</h5>
 
+            <?php
+            $variant_names = $_POST['variant_name'] ?? [''];
+            $variant_prices = $_POST['variant_price'] ?? [''];
+            $variant_quantitys = $_POST['variant_quantity'] ?? [''];
+
+            $max = max(count($variant_names), 1);
+            ?>
+
             <div id="variants-container">
 
-                <div class="variant grid md:grid-cols-3 grid-cols-1 gap-4">
+                <?php for ($i = 0; $i < $max; $i++): ?>
 
-                    <div class="flex flex-col space-y-2">
-                        <label>Variant Name</label>
-                        <input type="text" name="variant_name[]" class="form-input rounded">
+                    <div class="variant grid md:grid-cols-3 grid-cols-1 gap-4 mt-4">
+
+                        <div class="flex flex-col space-y-2">
+                            <label>Variant Name</label>
+                            <input type="text"
+                                name="variant_name[]"
+                                value="<?= htmlspecialchars($variant_names[$i] ?? '') ?>"
+                                class="form-input rounded <?= !empty($error['variant'][$i]['name']) ? 'border-red-500' : '' ?>">
+
+                            <?php if (!empty($error['variant'][$i]['name'])): ?>
+                                <span class="text-red-500 text-xs"><?= $error['variant'][$i]['name'] ?></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="flex flex-col space-y-2">
+                            <label>Price</label>
+                            <input type="number"
+                                name="variant_price[]"
+                                value="<?= htmlspecialchars($variant_prices[$i] ?? '') ?>"
+                                class="form-input rounded <?= !empty($error['variant'][$i]['price']) ? 'border-red-500' : '' ?>">
+
+                            <?php if (!empty($error['variant'][$i]['price'])): ?>
+                                <span class="text-red-500 text-xs"><?= $error['variant'][$i]['price'] ?></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="flex flex-col space-y-2">
+                            <label>Quantity</label>
+                            <input type="number"
+                                name="variant_quantity[]"
+                                value="<?= htmlspecialchars($variant_quantitys[$i] ?? '') ?>"
+                                class="form-input rounded <?= !empty($error['variant'][$i]['qty']) ? 'border-red-500' : '' ?>">
+
+                            <?php if (!empty($error['variant'][$i]['qty'])): ?>
+                                <span class="text-red-500 text-xs"><?= $error['variant'][$i]['qty'] ?></span>
+                            <?php endif; ?>
+                        </div>
+
                     </div>
 
-                    <div class="flex flex-col space-y-2">
-                        <label>Price</label>
-                        <input type="number" name="variant_price[]" class="form-input rounded">
-                    </div>
-
-                    <div class="flex flex-col space-y-2">
-                        <label>Quantity</label>
-                        <input type="number" name="variant_quantity[]" class="form-input rounded">
-                    </div>
-
-                </div>
+                <?php endfor; ?>
 
             </div>
 
-            <?php if (!empty($error['variant'])): ?>
-                <span class="text-red-500 text-xs block my-4"><?= $error['variant'] ?></span>
+            <?php if (!empty($error['variant_general'])): ?>
+                <span class="text-red-500 text-xs block my-4">
+                    <?= $error['variant_general'] ?>
+                </span>
             <?php endif; ?>
 
             <div class="flex justify-end mt-6">
@@ -178,8 +213,8 @@ $old = [
             <hr class="my-6">
 
             <button type="submit"
-                    name="add_product"
-                    class="btn bg-slate-700 hover:bg-slate-900 text-white rounded-full">
+                name="add_product"
+                class="btn bg-slate-700 hover:bg-slate-900 text-white rounded-full">
                 Add product
             </button>
 
@@ -198,46 +233,46 @@ $old = [
 
 <!-- IMAGE PREVIEW -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
 
-    const imageUpload = document.querySelector('.image-upload');
-    const previewContainer = document.querySelector('.preview-image');
+        const imageUpload = document.querySelector('.image-upload');
+        const previewContainer = document.querySelector('.preview-image');
 
-    if (imageUpload) {
-        imageUpload.addEventListener('change', function () {
-            previewContainer.innerHTML = "";
+        if (imageUpload) {
+            imageUpload.addEventListener('change', function() {
+                previewContainer.innerHTML = "";
 
-            for (const file of this.files) {
-                const reader = new FileReader();
-                const img = document.createElement("img");
+                for (const file of this.files) {
+                    const reader = new FileReader();
+                    const img = document.createElement("img");
 
-                img.className = "w-[120px] h-[120px] object-cover rounded";
+                    img.className = "w-[120px] h-[120px] object-cover rounded";
 
-                reader.onload = e => img.src = e.target.result;
+                    reader.onload = e => img.src = e.target.result;
 
-                reader.readAsDataURL(file);
-                previewContainer.appendChild(img);
-            }
-        });
-    }
+                    reader.readAsDataURL(file);
+                    previewContainer.appendChild(img);
+                }
+            });
+        }
 
-});
+    });
 </script>
 
 <!-- VARIANTS -->
 <script>
-function addVariant() {
-    const container = document.getElementById('variants-container');
+    function addVariant() {
+        const container = document.getElementById('variants-container');
 
-    const div = document.createElement('div');
-    div.className = "variant grid md:grid-cols-3 grid-cols-1 gap-4 mt-4";
+        const div = document.createElement('div');
+        div.className = "variant grid md:grid-cols-3 grid-cols-1 gap-4 mt-4";
 
-    div.innerHTML = `
+        div.innerHTML = `
         <input type="text" name="variant_name[]" class="form-input rounded" placeholder="Name">
         <input type="number" name="variant_price[]" class="form-input rounded" placeholder="Price">
         <input type="number" name="variant_quantity[]" class="form-input rounded" placeholder="Qty">
     `;
 
-    container.appendChild(div);
-}
+        container.appendChild(div);
+    }
 </script>

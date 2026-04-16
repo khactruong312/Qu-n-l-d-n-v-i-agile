@@ -313,70 +313,131 @@ include '../model/comments.php';
                         case 'add_product':
                             $list_category = getall_category();
                             $list_brand = getall_brand();
+
                             if (isset($_POST['add_product'])) {
-                                $error = array();
 
-                                $name = $_POST['name'];
-                                $description = $_POST['description'];
-                                $discount = isset($_POST['discount']) ? floatval($_POST['discount']) : 0.0;
+                                $error = [];
+
+                                $name = $_POST['name'] ?? '';
+                                $description = $_POST['description'] ?? '';
+                                $discount = isset($_POST['discount']) ? floatval($_POST['discount']) : 0;
                                 $is_featured = isset($_POST['is_featured']) ? 1 : 0;
-                                $brand_id = $_POST['brand_id'];
-                                $category_id = $_POST['category_id'];
+                                $brand_id = $_POST['brand_id'] ?? '';
+                                $category_id = $_POST['category_id'] ?? '';
 
-                                $variant_names = $_POST['variant_name'];
-                                $variant_prices = $_POST['variant_price'];
-                                $variant_quantitys = $_POST['variant_quantity'];
+                                // =========================
+                                // VARIANT VALIDATE
+                                // =========================
+                                $variant_names = $_POST['variant_name'] ?? [];
+                                $variant_prices = $_POST['variant_price'] ?? [];
+                                $variant_quantitys = $_POST['variant_quantity'] ?? [];
 
-                                if (empty($variant_names) || empty($variant_prices) || empty($variant_quantitys)) {
-                                    $error['variant'] = "Please enter product variant information";
+                                $variant_error = [];
+                                $validVariant = false;
+
+                                $max = max(count($variant_names), count($variant_prices), count($variant_quantitys));
+
+                                for ($i = 0; $i < $max; $i++) {
+
+                                    $v_name = trim($variant_names[$i] ?? '');
+                                    $v_price = $variant_prices[$i] ?? '';
+                                    $v_qty = $variant_quantitys[$i] ?? '';
+
+                                    // nếu có nhập gì đó
+                                    if ($v_name !== '' || $v_price !== '' || $v_qty !== '') {
+
+                                        if ($v_name === '') {
+                                            $variant_error[$i]['name'] = "Tên biến thể bắt buộc";
+                                        }
+
+                                        if ($v_price === '') {
+                                            $variant_error[$i]['price'] = "Giá bắt buộc";
+                                        } elseif ($v_price <= 0) {
+                                            $variant_error[$i]['price'] = "Giá phải > 0";
+                                        }
+
+                                        if ($v_qty === '') {
+                                            $variant_error[$i]['qty'] = "Số lượng bắt buộc";
+                                        } elseif ($v_qty < 0) {
+                                            $variant_error[$i]['qty'] = "SL phải >= 0";
+                                        }
+
+                                        if ($v_name !== '' && $v_price !== '' && $v_qty !== '') {
+                                            $validVariant = true;
+                                        }
+                                    }
                                 }
 
+                                if (!$validVariant) {
+                                    $error['variant_general'] = "Phải có ít nhất 1 biến thể hợp lệ";
+                                }
+
+                                if (!empty($variant_error)) {
+                                    $error['variant'] = $variant_error;
+                                }
+
+                                // =========================
+                                // BASIC VALIDATE
+                                // =========================
                                 if (empty($name)) {
                                     $error['name'] = "Please enter product name!";
                                 }
+
                                 if (empty($description)) {
                                     $error['description'] = "Please enter product description!";
                                 }
 
                                 if (empty($brand_id)) {
-                                    $error['brand_id'] = "Please enter product brand Id!";
+                                    $error['brand_id'] = "Please select brand!";
                                 }
+
                                 if (empty($category_id)) {
-                                    $error['category_id'] = "Please enter product category Id!";
+                                    $error['category_id'] = "Please select category!";
                                 }
 
                                 if (empty($_FILES['images']['name'][0])) {
                                     $error['images'] = "Upload at least 1 image";
                                 }
 
-
+                                // =========================
+                                // INSERT
+                                // =========================
                                 if (empty($error)) {
+
                                     $last_id = insert_product($name, $description, $discount, $category_id, $brand_id, $is_featured);
+
                                     if ($last_id) {
-                                        foreach ($_FILES['images']['name'] as $key => $name) {
+
+                                        // upload images
+                                        foreach ($_FILES['images']['name'] as $key => $img_name) {
                                             $targetDir = '../upload/';
                                             $tmp_name = $_FILES['images']['tmp_name'][$key];
-                                            $file_name = uniqid() . '_' . $name;
+                                            $file_name = uniqid() . '_' . $img_name;
                                             $targetFile = $targetDir . $file_name;
 
                                             if (move_uploaded_file($tmp_name, $targetFile)) {
                                                 insert_image($file_name, $last_id);
-                                            } else {
-                                                $error['images'] = "Some thing went wrong!!";
                                             }
                                         }
+
+                                        // insert variant
                                         foreach ($variant_names as $key => $variant_name) {
-                                            $variant_price = $variant_prices[$key];
-                                            $variant_quantity = $variant_quantitys[$key];
-                                            // Only insert if all variant fields are filled
-                                            if (!empty($variant_name) && !empty($variant_price) && !empty($variant_quantity)) {
-                                                insert_variant($variant_name, $variant_price, $variant_quantity, $last_id);
+
+                                            $v_name = trim($variant_name);
+                                            $v_price = $variant_prices[$key] ?? '';
+                                            $v_qty = $variant_quantitys[$key] ?? '';
+
+                                            if ($v_name !== '' && $v_price !== '' && $v_qty !== '') {
+                                                insert_variant($v_name, $v_price, $v_qty, $last_id);
                                             }
                                         }
                                     }
+
                                     header('location: index.php?act=list_product');
+                                    exit();
                                 }
                             }
+
                             include('./products/add.php');
                             break;
                         case "update_product":
